@@ -1,40 +1,115 @@
-MIT License
+Creative Commons Attribution-ShareAlike 4.0 International License
 
-Copyright (c) 2025 Project Equilibrium Contributors
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0
+International License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by-sa/4.0/ or send a letter to
+Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+===============================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Copyright (c) 2025 Project EQUILIBRIUM Contributors
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You are free to:
 
----
+* Share — copy and redistribute the material in any medium or format
+* Adapt — remix, transform, and build upon the material for any purpose,
+  even commercially
+
+Under the following terms:
+
+* Attribution — You must give appropriate credit, provide a link to the license,
+  and indicate if changes were made. You may do so in any reasonable manner,
+  but not in any way that suggests the licensor endorses you or your use.
+
+* ShareAlike — If you remix, transform, or build upon the material, you must
+  distribute your contributions under the same license as the original.
+
+* No additional restrictions — You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license permits.
+
+Notices:
+
+You do not have to comply with the license for elements of the material in the
+public domain or where your use is permitted by an applicable exception or
+limitation.
+
+No warranties are given. The license may not give you all of the permissions
+necessary for your intended use. For example, other rights such as publicity,
+privacy, or moral rights may limit how you use the material.
+
+===============================================================================
 
 ADDITIONAL TERMS FOR MEDICAL AND EDUCATIONAL MATERIALS
 
 The curriculum materials, clinical pathways, assessment tools, and other
-medical/educational content in this repository are provided for informational
-and educational purposes only. They are not intended to replace professional
-medical advice, diagnosis, or treatment.
+medical and educational content in this repository are provided for
+informational and educational purposes only.
 
-Users of this material should:
-- Adapt content to their specific institutional context and regulatory requirements
-- Ensure compliance with local medical practice standards and regulations
-- Obtain appropriate review and approval before clinical implementation
-- Maintain professional liability coverage for clinical applications
+IMPORTANT DISCLAIMERS:
 
-The contributors and maintainers of Project Equilibrium assume no liability
-for the use or implementation of these materials in clinical or educational
-settings.
+1. NOT MEDICAL ADVICE: These materials are not intended to replace professional
+   medical advice, diagnosis, or treatment. Always seek the advice of qualified
+   health providers with any questions regarding medical conditions.
+
+2. CLINICAL USE: Users implementing these materials in clinical settings should:
+   - Adapt content to their specific institutional context and regulatory requirements
+   - Ensure compliance with local medical practice standards and regulations
+   - Obtain appropriate review and approval before clinical implementation
+   - Maintain professional liability coverage for clinical applications
+   - Ensure proper training and competency before use
+   - Apply clinical judgment in all cases
+
+3. EDUCATIONAL USE: Users implementing these materials in educational settings should:
+   - Ensure alignment with accreditation requirements
+   - Obtain appropriate institutional approvals
+   - Adapt to local educational context
+   - Ensure qualified faculty deliver content
+   - Maintain educational quality standards
+
+4. NO WARRANTY: The materials are provided "as is" without warranty of any kind,
+   either expressed or implied, including, but not limited to, the implied
+   warranties of merchantability and fitness for a particular purpose.
+
+5. LIMITATION OF LIABILITY: The contributors and maintainers of Project EQUILIBRIUM
+   assume no liability for the use or implementation of these materials in
+   clinical or educational settings. Users assume all responsibility and risk
+   for the use of these materials.
+
+6. EVIDENCE-BASED: While materials are based on current best evidence, medical
+   knowledge evolves. Users should:
+   - Verify current evidence and guidelines
+   - Update materials as new evidence emerges
+   - Consider individual patient and context factors
+   - Maintain professional standards
+
+7. LOCAL ADAPTATION REQUIRED: These materials were developed primarily for UK
+   NHS context. International users must adapt to local:
+   - Healthcare systems and structures
+   - Regulatory and legal frameworks
+   - Cultural contexts
+   - Available resources
+   - Professional standards
+
+8. ATTRIBUTION: When using or adapting these materials, proper attribution
+   should include:
+   - "Based on materials from Project EQUILIBRIUM"
+   - Link to project repository
+   - Specification of any modifications made
+   - Date of access/adaptation
+
+===============================================================================
+
+FOR QUESTIONS ABOUT THIS LICENSE:
+
+Email: legal@project-equilibrium.org
+
+For the full CC BY-SA 4.0 legal code, see:
+https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+===============================================================================
+
+Project EQUILIBRIUM
+Evidence-based QUalIty Learning Initiative for Better Restorative & Integrated
+Universal Medicine
+
+https://github.com/FreespiritD/Project-equilibrium
