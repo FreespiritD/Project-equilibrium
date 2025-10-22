@@ -226,13 +226,32 @@ Integrated Universal Medicine. Retrieved [date] from [specific URL]
 
 ## Acknowledgments
 
-Project EQUILIBRIUM is made possible through the dedication of healthcare professionals, educators, researchers, patients, and institutions committed to transforming mental health care.
+This project builds on decades of work by:
+- Researchers documenting holistic intervention evidence
+- Clinicians pioneering integrative approaches
+- Patients advocating for better care
+- Medical educators committed to reform
 
-### Funding & Support
-- [List of funding bodies and institutional partners to be added]
+Special thanks to contributors (see [CONTRIBUTORS.md](CONTRIBUTORS.md))
 
 ### Steering Committee
-- [Committee members to be listed]
+- [Committee members to be listed as project progresses]
+
+## Funding
+
+This project is funded by:
+- NHS England
+- Department of Health
+- Wellcome Trust
+- National Institute for Health Research (NIHR)
+
+**No pharmaceutical industry funding accepted.**
+
+---
+
+**Together, we can restore balance to medicine.**
+
+[![Star this repo](https://img.shields.io/github/stars/FreespiritD/Project-equilibrium?style=social)](https://github.com/FreespiritD/Project-equilibrium)
 
 ---
 
