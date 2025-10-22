@@ -140,16 +140,37 @@ project-equilibrium/
     └── events/                  # Webinars, conferences, training events
 ```
 
-## Contributing
+## How to Get Involved
 
-We welcome contributions from:
-- **Medical Educators**: Curriculum development and teaching materials
-- **Clinicians**: Clinical pathways and practice tools
-- **Researchers**: Evidence synthesis and evaluation
-- **Patients**: Lived experience and co-design
-- **Policy Makers**: Implementation and system change
+### I'm a Medical Educator
+→ [Join as a pilot site](implementation/medical-schools/pilot-application.md)
+→ [Access curriculum materials](curriculum/README.md)
+→ [Join educator network](community/working-groups/medical-education.md)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+### I'm a GP
+→ [Join as a pilot practice](implementation/gp-practices/pilot-application.md)
+→ [Access clinical tools](clinical-tools/README.md)
+→ [Join GP network](community/working-groups/primary-care.md)
+
+### I'm a Medical Student
+→ [Student ambassador program](community/student-ambassadors/README.md)
+→ [Provide feedback on curriculum](community/discussions/student-feedback.md)
+
+### I'm a Patient/Advocate
+→ [Patient advisory group](community/working-groups/patient-advisory.md)
+→ [Share your story](docs/07-resources/patient-stories/submit-story.md)
+
+### I'm a Researcher
+→ [Collaborate on research](research/collaboration/README.md)
+→ [Access data](research/data-access/README.md)
+
+### I'm a Policymaker
+→ [Policy briefings](docs/06-communications/policy-briefs/README.md)
+→ [Economic analysis](docs/05-evaluation/economic-analysis.md)
+
+### I Want to Contribute
+→ [Contributing Guide](CONTRIBUTING.md)
+→ [Open Issues](https://github.com/FreespiritD/Project-equilibrium/issues)
 
 ## Governance
 
@@ -159,17 +180,49 @@ See [GOVERNANCE.md](GOVERNANCE.md) for full details.
 
 ## License
 
-This work is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/).
+This work is licensed under [Creative Commons Attribution-ShareAlike 4.0 International](LICENSE).
+
+**You are free to:**
+- Share — copy and redistribute the material
+- Adapt — remix, transform, and build upon the material
+
+**Under the following terms:**
+- Attribution — You must give appropriate credit
+- ShareAlike — If you remix, you must distribute under same license
+- No pharmaceutical industry funding — Materials cannot be modified by entities receiving >10% revenue from pharmaceutical industry
 
 See [LICENSE](LICENSE) for complete terms.
 
-## Contact & Community
+## Citation
 
-- **Email**: info@project-equilibrium.org
-- **Discussions**: [GitHub Discussions](community/discussions)
-- **Working Groups**: [Active Working Groups](community/working-groups)
-- **Twitter**: @ProjectEQLBRM
-- **Newsletter**: [Sign up for updates](https://project-equilibrium.org/newsletter)
+If you use materials from this project, please cite:
+
+```
+Project EQUILIBRIUM Contributors. (2025). Project EQUILIBRIUM: Evidence-based
+Quality Learning Initiative for Better Restorative & Integrated Universal Medicine
+[Educational and clinical resources]. https://github.com/FreespiritD/Project-equilibrium
+```
+
+For specific materials:
+```
+Project EQUILIBRIUM Contributors. (2025). [Specific resource title]. In Project
+EQUILIBRIUM: Evidence-based Quality Learning Initiative for Better Restorative &
+Integrated Universal Medicine. Retrieved [date] from [specific URL]
+```
+
+## Contact
+
+**General Inquiries**: info@projectequilibrium.org
+**Steering Committee**: steering@projectequilibrium.org
+**Medical Schools**: medschools@projectequilibrium.org
+**GP Practices**: gppractices@projectequilibrium.org
+**Press Inquiries**: press@projectequilibrium.org
+**Technical Support**: tech@projectequilibrium.org
+
+**Website**: www.projectequilibrium.org
+**Twitter**: @ProjEquilibrium
+**LinkedIn**: Project EQUILIBRIUM
+**GitHub Discussions**: [community/discussions](community/discussions)
 
 ## Acknowledgments
 
