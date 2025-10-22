@@ -1,241 +1,199 @@
-# Contributing to Project Equilibrium
+# Contributing to Project EQUILIBRIUM
 
-Thank you for your interest in contributing to Project Equilibrium! This document provides guidelines and instructions for contributing to this collaborative initiative.
-
-## Table of Contents
-
-- [Code of Conduct](#code-of-conduct)
-- [How Can I Contribute?](#how-can-i-contribute)
-- [Contribution Workflow](#contribution-workflow)
-- [Content Guidelines](#content-guidelines)
-- [Quality Standards](#quality-standards)
-- [Review Process](#review-process)
-- [Recognition](#recognition)
+Thank you for your interest in contributing! This project succeeds through collaboration.
 
 ## Code of Conduct
 
-This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+All contributors must adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## How Can I Contribute?
+## Ways to Contribute
 
-### Types of Contributions
+### 🎓 Medical Educators
+- Review and improve curriculum materials
+- Contribute teaching case studies
+- Share implementation experiences
+- Participate in faculty training design
 
-We welcome various types of contributions:
+### 🏥 Clinicians
+- Refine clinical pathways
+- Contribute patient materials
+- Share best practices
+- Pilot test tools
 
-#### 1. Curriculum Development
-- Educational materials and lesson plans
-- Assessment tools and rubrics
-- Faculty training resources
-- Student learning activities
+### 🔬 Researchers
+- Conduct systematic reviews
+- Analyze project data
+- Write academic publications
+- Peer review protocols
 
-#### 2. Clinical Tools
-- Evidence-based clinical pathways
-- Patient assessment instruments
-- Decision support tools
-- EHR templates and workflows
+### 💻 Developers
+- Build clinical tools and calculators
+- Create data visualization dashboards
+- Develop mobile apps
+- Improve documentation site
 
-#### 3. Research
-- Study protocols and methodologies
-- Data collection instruments
-- Analysis scripts and tools
-- Research findings and publications
+### 📊 Data Scientists
+- Analyze outcomes data
+- Create predictive models
+- Build evaluation frameworks
+- Visualize results
 
-#### 4. Implementation Resources
-- Implementation guides and frameworks
-- Training materials
-- Best practices documentation
-- Case studies and lessons learned
+### 📝 Writers
+- Improve documentation
+- Create patient education materials
+- Write blog posts
+- Edit academic papers
 
-#### 5. Technical Contributions
-- Calculators and decision tools
-- Data visualization dashboards
-- Web applications
-- Code improvements and bug fixes
+### 🗣️ Advocates
+- Share project information
+- Recruit participants
+- Provide patient perspective
+- Policy advocacy
 
-#### 6. Documentation
-- User guides and tutorials
-- API documentation
-- Translation and localization
-- Examples and use cases
+## Getting Started
 
-### Ways to Contribute
+1. **Read the documentation**
+   - [Implementation Plan](docs/00-executive-summary/implementation-plan.md)
+   - [Evidence Base](docs/01-evidence-base/evidence-summary.md)
 
-- **Report Issues**: Identify bugs, broken links, or content gaps
-- **Suggest Enhancements**: Propose new features or improvements
-- **Submit Content**: Add new materials or update existing ones
-- **Review Submissions**: Provide peer review for proposed changes
-- **Join Working Groups**: Participate in focused development teams
-- **Share Experiences**: Document implementation experiences and outcomes
+2. **Join the community**
+   - [Discussions](https://github.com/FreespiritD/Project-equilibrium/discussions)
+   - [Working Groups](community/working-groups)
 
-## Contribution Workflow
+3. **Find an issue**
+   - [Good First Issues](https://github.com/FreespiritD/Project-equilibrium/labels/good%20first%20issue)
+   - [Help Wanted](https://github.com/FreespiritD/Project-equilibrium/labels/help%20wanted)
 
-### 1. Before You Start
+4. **Make your contribution**
+   - Fork the repository
+   - Create a branch
+   - Make your changes
+   - Submit a pull request
 
-- Check existing issues and pull requests to avoid duplication
-- Join relevant [working groups](/community/working-groups) for major contributions
-- Discuss significant changes in [community discussions](/community/discussions)
+## Contribution Guidelines
 
-### 2. Setting Up
+### Documentation Contributions
 
-```bash
-# Fork the repository on GitHub
-# Clone your fork
-git clone https://github.com/YOUR-USERNAME/project-equilibrium.git
-cd project-equilibrium
+**All documentation should:**
+- Be evidence-based (cite sources)
+- Be accessible (plain language, no jargon)
+- Include examples
+- Be peer-reviewed before merging
 
-# Add upstream remote
-git remote add upstream https://github.com/ORIGINAL-OWNER/project-equilibrium.git
+**Format:**
+- Markdown format (.md)
+- Follow style guide (see [STYLE_GUIDE.md](STYLE_GUIDE.md))
+- Include table of contents for long documents
+- Use relative links for internal references
 
-# Create a feature branch
-git checkout -b feature/your-feature-name
-```
+### Curriculum Contributions
 
-### 3. Making Changes
+**Curriculum materials should:**
+- Align with learning objectives
+- Be evidence-based
+- Include assessment methods
+- Be pilot-tested when possible
 
-- Follow the [Content Guidelines](#content-guidelines) below
-- Keep changes focused and atomic
-- Include appropriate documentation
-- Update relevant README files
-- Add citations for evidence-based content
+**Required elements:**
+- Learning objectives
+- Evidence base (references)
+- Teaching methods
+- Assessment approach
+- Time requirements
 
-### 4. Submitting Changes
+### Clinical Tool Contributions
 
-```bash
-# Commit your changes
-git add .
-git commit -m "Brief description of changes"
+**Clinical tools should:**
+- Be evidence-based
+- Be user-tested with clinicians
+- Include instructions
+- Be accessible (work on mobile devices)
 
-# Push to your fork
-git push origin feature/your-feature-name
+**Required elements:**
+- Purpose and scope
+- Evidence base
+- Usage instructions
+- Validation data (if applicable)
 
-# Create a pull request on GitHub
-```
+### Code Contributions
 
-### 5. Pull Request Guidelines
+**Code should:**
+- Follow project coding standards
+- Include tests
+- Be documented
+- Pass all checks
 
-Your pull request should:
-- Have a clear title describing the change
-- Include a detailed description of what and why
-- Reference any related issues
-- Include evidence or citations for clinical/educational content
-- Pass all automated checks (if applicable)
-- Be reviewed by at least two contributors for significant changes
+**Required:**
+- Unit tests
+- Documentation
+- Code review approval
 
-## Content Guidelines
+### Research Contributions
 
-### General Principles
+**Research contributions should:**
+- Follow established protocols
+- Use approved methods
+- Protect participant privacy
+- Undergo ethical review
 
-1. **Evidence-Based**: All clinical and educational content should be grounded in current evidence
-2. **Accessible**: Use clear language appropriate for the target audience
-3. **Inclusive**: Consider diverse learners, patients, and practice contexts
-4. **Practical**: Focus on actionable, implementable content
-5. **Maintained**: Commit to updating content as evidence evolves
+## Pull Request Process
 
-### File Organization
+1. **Before submitting:**
+   - Update relevant documentation
+   - Add tests if applicable
+   - Ensure all checks pass
+   - Get feedback from relevant working group
 
-- Place files in appropriate directories based on content type
-- Use clear, descriptive file names (lowercase, hyphens for spaces)
-- Include README.md files in directories to explain contents
-- Organize related materials together
+2. **PR description should include:**
+   - What changed and why
+   - Link to related issue
+   - Testing performed
+   - Screenshots (if UI changes)
 
-### Documentation Standards
+3. **Review process:**
+   - At least 2 reviewers required
+   - Address all comments
+   - Maintain constructive dialogue
+   - Squash commits before merging
 
-- Use Markdown for text documents
-- Include metadata (author, date, version) in document headers
-- Provide clear headings and structure
-- Add table of contents for longer documents
-- Include references and citations
+4. **After merging:**
+   - Delete branch
+   - Update any related issues
+   - Announce in relevant channels
 
-### Clinical Content
+## Conflict of Interest
 
-- Cite primary sources and evidence levels
-- Include date of last review/update
-- Specify target population and context
-- Note regulatory/institutional approval requirements
-- Disclaim when content requires local adaptation
+**All contributors must disclose:**
+- Pharmaceutical industry ties (employment, consulting, stock)
+- Relevant financial interests
+- Any conflicts that could bias contributions
 
-### Educational Content
+**Contributors with pharmaceutical industry funding >£10,000/year:**
+- Cannot contribute to evidence reviews
+- Cannot contribute to curriculum design
+- Can contribute technical/code improvements only
 
-- Specify learning objectives
-- Indicate target audience (year/level)
-- Provide time estimates for activities
-- Include assessment criteria
-- Note prerequisites or dependencies
-
-## Quality Standards
-
-### Review Criteria
-
-All contributions will be evaluated on:
-
-1. **Accuracy**: Is the content factually correct and evidence-based?
-2. **Relevance**: Does it align with project goals?
-3. **Clarity**: Is it well-written and understandable?
-4. **Completeness**: Are all necessary components included?
-5. **Usability**: Can others implement or adapt the content?
-
-### Evidence Standards
-
-- Prefer systematic reviews and meta-analyses
-- Cite peer-reviewed publications where available
-- Note evidence level/quality
-- Update citations as new evidence emerges
-- Acknowledge gaps or controversies
-
-## Review Process
-
-### Timeline
-
-- Initial review: Within 1 week of submission
-- Peer review: 2-4 weeks for substantial contributions
-- Final decision: Within 6 weeks of submission
-
-### Review Steps
-
-1. **Automated Checks**: Format, links, basic quality checks
-2. **Maintainer Review**: Alignment with project scope and standards
-3. **Peer Review**: Subject matter expert evaluation
-4. **Community Feedback**: Open comment period for significant changes
-5. **Revision**: Incorporate feedback and address concerns
-6. **Approval**: Final review and merge
-
-### Reviewer Responsibilities
-
-Reviewers should:
-- Respond in a timely manner
-- Provide constructive, specific feedback
-- Focus on content quality and accuracy
-- Respect contributor effort and expertise
-- Approve when standards are met
+**Disclosure process:**
+- Fill out [COI form](community/coi-form.md)
+- Update annually
+- Disclose immediately if situation changes
 
 ## Recognition
 
-### Contributor Attribution
-
-- All contributors are listed in project documentation
-- Significant contributions acknowledged in relevant sections
-- Authors credited on specific content they create
-- Working group members recognized in project outputs
-
-### Types of Recognition
-
-- Contributor listing in repository
-- Co-authorship on publications
-- Presentation opportunities at project events
-- Leadership roles in working groups
-- Letters of acknowledgment for institutional purposes
+Contributors will be recognized:
+- Listed in [CONTRIBUTORS.md](CONTRIBUTORS.md)
+- Acknowledged in publications
+- Invited to annual conference
+- Eligible for authorship (for significant contributions)
 
 ## Questions?
 
-- Join our [community discussions](/community/discussions)
-- Contact working group leads
-- Open an issue for general questions
-- Reach out to project maintainers
+- 📧 Email: contribute@projectequilibrium.org
+- 💬 [Discussions](https://github.com/FreespiritD/Project-equilibrium/discussions)
+- 🗓️ [Office Hours](community/office-hours.md) - Weekly drop-in sessions
 
-## License
+## Thank You!
 
-By contributing to Project Equilibrium, you agree that your contributions will be licensed under the same [LICENSE](LICENSE) as the project.
+Every contribution, large or small, moves us toward better mental healthcare.
 
----
-
-**Thank you for contributing to Project Equilibrium and helping advance medical education and patient care!**
+**Together, we can restore balance to medicine.**
