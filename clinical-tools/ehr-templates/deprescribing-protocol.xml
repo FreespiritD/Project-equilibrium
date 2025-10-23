@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EHRTemplate>
+  <TemplateName>EQUILIBRIUM Antidepressant Deprescribing Protocol</TemplateName>
+  <Version>2.0</Version>
+  <LastUpdated>2025-10-23</LastUpdated>
+  <Description>Structured protocol for safely tapering and discontinuing antidepressant medication. Includes withdrawal symptom monitoring, relapse detection, and evidence-based tapering schedules.</Description>
+
+  <Metadata>
+    <TemplateID>EQUIL-DEPRESCRIBE-001</TemplateID>
+    <Category>Mental Health - Antidepressant Deprescribing</Category>
+    <ClinicalArea>Primary Care</ClinicalArea>
+    <ReadCode>8B3W.00</ReadCode>
+    <SNOMEDCode>419620001</SNOMEDCode>
+    <TargetConditions>
+      <Condition>Antidepressant discontinuation</Condition>
+      <Condition>Medication tapering</Condition>
+      <Condition>Depression in remission</Condition>
+    </TargetConditions>
+    <EvidenceBase>
+      <Guideline>NICE CG90 Depression - Continue 6-12 months after remission</Guideline>
+      <Guideline>NICE CG90 - Taper over 4+ weeks to reduce withdrawal</Guideline>
+      <Reference>Antidepressant discontinuation syndrome - BMJ 2019</Reference>
+    </EvidenceBase>
+  </Metadata>
+
+  <!-- ELIGIBILITY ASSESSMENT -->
+  <Section id="eligibility_assessment">
+    <Title>Eligibility for Deprescribing</Title>
+    <Description>Determine if patient is appropriate candidate for stopping antidepressant</Description>
+
+    <Field id="current_medication" type="text" required="true">
+      <Label>Current Antidepressant</Label>
+      <Placeholder>Name and dose, e.g., "Sertraline 100mg daily"</Placeholder>
+    </Field>
+
+    <Field id="medication_duration_total" type="number" required="true">
+      <Label>Total Duration on Medication (months)</Label>
+      <Range min="0" max="600"/>
+    </Field>
+
+    <Field id="current_phq9_score" type="number" required="true">
+      <Label>Current PHQ-9 Score</Label>
+      <Range min="0" max="27"/>
+      <Link>Link to most recent PHQ-9 assessment</Link>
+      <Alert condition="value &gt;= 5">PHQ-9 ≥ 5 indicates not in remission - stopping medication NOT recommended</Alert>
+    </Field>
+
+    <Field id="remission_duration_months" type="number" required="true">
+      <Label>Duration of Remission (months)</Label>
+      <Guidance>Remission defined as PHQ-9 &lt; 5. How many months has patient maintained remission?</Guidance>
+      <Alert condition="value &lt; 6">Less than 6 months remission - NICE recommends continuing treatment. Consider waiting.</Alert>
+    </Field>
+
+    <Field id="depression_history" type="select" required="true">
+      <Label>Depression History</Label>
+      <Options>
+        <Option value="first_episode">First episode</Option>
+        <Option value="second_episode">Second episode</Option>
+        <Option value="recurrent_3plus">Recurrent (3+ episodes)</Option>
+        <Option value="chronic">Chronic/persistent depression</Option>
+      </Options>
+      <Guidance>
+        - First episode: Can consider stopping after 6-12 months remission
+        - Second episode: Consider stopping after 12-24 months remission
+        - Recurrent (3+): Consider long-term/indefinite treatment
+      </Guidance>
+    </Field>
+
+    <Field id="previous_relapse_on_stopping" type="radio" required="true">
+      <Label>Previous Relapse When Stopped Medication?</Label>
+      <Options>
+        <Option value="yes">Yes - relapsed when stopped before</Option>
+        <Option value="no">No - never stopped before OR stopped successfully</Option>
+        <Option value="unknown">Unknown - first time on antidepressant</Option>
+      </Options>
+      <Alert condition="value='yes'">Previous relapse on stopping indicates high risk - consider long-term treatment or very slow taper with close monitoring</Alert>
+    </Field>
+
+    <Field id="current_life_stressors" type="radio" required="true">
+      <Label>Current Life Stressors Present?</Label>
+      <Options>
+        <Option value="yes">Yes - significant current stressors</Option>
+        <Option value="no">No - life relatively stable</Option>
+      </Options>
+      <Guidance>Avoid stopping during periods of high stress (relationship breakdown, bereavement, job loss, major life changes)</Guidance>
+      <Alert condition="value='yes'">Current life stressors present - consider delaying deprescribing until situation stabilizes</Alert>
+    </Field>
+
+    <Field id="lifestyle_interventions_maintained" type="radio" required="true">
+      <Label>Lifestyle Interventions Maintained?</Label>
+      <Options>
+        <Option value="yes">Yes - exercising regularly, good sleep, social connection maintained</Option>
+        <Option value="partial">Partial - some maintained</Option>
+        <Option value="no">No - not maintaining protective lifestyle factors</Option>
+      </Options>
+      <Guidance>Lifestyle interventions (especially exercise) reduce relapse risk. Strongly encourage maintaining before stopping medication.</Guidance>
+      <Alert condition="value='no'">Lifestyle interventions not maintained - strongly recommend establishing exercise/sleep/social routine before stopping medication to reduce relapse risk</Alert>
+    </Field>
+
+    <Field id="patient_preference_on_stopping" type="select" required="true">
+      <Label>Patient Preference Regarding Stopping</Label>
+      <Options>
+        <Option value="wants_stop">Patient wants to stop medication</Option>
+        <Option value="neutral">Patient neutral/undecided</Option>
+        <Option value="wants_continue">Patient wants to continue medication</Option>
+        <Option value="ambivalent">Patient ambivalent (both wants to stop and fears relapse)</Option>
+      </Options>
+      <Guidance>Shared decision-making: Patient preference important. Discuss pros/cons.</Guidance>
+    </Field>
+
+    <Field id="eligibility_assessment_outcome" type="select" required="true">
+      <Label>Deprescribing Eligibility Assessment</Label>
+      <Options>
+        <Option value="eligible_low_risk">Eligible - Low risk (first episode, 6-12+ months remission, stable, lifestyle maintained)</Option>
+        <Option value="eligible_moderate_risk">Eligible - Moderate risk (some risk factors present, will need close monitoring)</Option>
+        <Option value="eligible_high_risk">Eligible - High risk (multiple risk factors, very slow taper essential, close monitoring)</Option>
+        <Option value="not_eligible_not_remission">NOT eligible - Not in remission (PHQ-9 ≥ 5)</Option>
+        <Option value="not_eligible_too_soon">NOT eligible - Remission &lt; 6 months</Option>
+        <Option value="not_eligible_recurrent">NOT eligible - Recurrent depression, recommend long-term treatment</Option>
+        <Option value="defer">DEFER - Current stressors, recommend revisit in 3-6 months</Option>
+      </Options>
+      <AutoPopulate>Suggested based on answers above</AutoPopulate>
+    </Field>
+
+    <Field id="eligibility_rationale" type="textarea" required="true">
+      <Label>Rationale for Eligibility Decision</Label>
+      <Placeholder>Clinical reasoning: Why is patient eligible/not eligible? What risk factors considered?</Placeholder>
+    </Field>
+  </Section>
+
+  <!-- SHARED DECISION-MAKING ABOUT STOPPING -->
+  <ConditionalSection show_if="eligibility_assessment_outcome CONTAINS 'eligible'">
+    <Section id="shared_decision_making_stopping">
+      <Title>Shared Decision-Making: Stopping Antidepressant</Title>
+      <Description>Discuss risks, benefits, and alternatives with patient</Description>
+
+      <Field id="benefits_of_stopping_discussed" type="checkbox" required="true">
+        <Label>Benefits of Stopping Discussed</Label>
+        <Options>
+          <Option value="no_side_effects">No more side effects (sexual, weight, emotional blunting)</Option>
+          <Option value="no_cost">No prescription cost</Option>
+          <Option value="no_daily_pill">No daily pill to remember</Option>
+          <Option value="psychological">Psychological benefit of managing without medication</Option>
+          <Option value="avoid_long_term">Avoid long-term medication if not needed</Option>
+        </Options>
+      </Field>
+
+      <Field id="risks_of_stopping_discussed" type="checkbox" required="true">
+        <Label>Risks of Stopping Discussed</Label>
+        <Options>
+          <Option value="relapse_risk">Relapse risk (50% after stopping vs 20-30% if continuing for 1+ years)</Option>
+          <Option value="withdrawal_symptoms">Withdrawal symptoms (dizziness, flu-like, electric shocks, anxiety, insomnia)</Option>
+          <Option value="duration_withdrawal">Withdrawal can last weeks to months if not tapered slowly</Option>
+          <Option value="distinguish_relapse">Difficulty distinguishing withdrawal from relapse initially</Option>
+          <Option value="may_need_restart">May need to restart medication if relapse occurs</Option>
+        </Options>
+      </Field>
+
+      <Field id="alternatives_discussed" type="checkbox">
+        <Label>Alternatives to Stopping Discussed</Label>
+        <Options>
+          <Option value="continue_indefinite">Continue medication indefinitely (especially if recurrent depression)</Option>
+          <Option value="reduce_dose">Reduce to lower dose (rather than stopping completely)</Option>
+          <Option value="wait_longer">Wait longer (more time in remission reduces relapse risk)</Option>
+          <Option value="switch_to_therapy">Switch to therapy (e.g., MBCT for relapse prevention)</Option>
+        </Options>
+      </Field>
+
+      <Field id="patient_decision_after_discussion" type="select" required="true">
+        <Label>Patient Decision After Discussion</Label>
+        <Options>
+          <Option value="proceed_taper">Proceed with tapering/stopping</Option>
+          <Option value="continue_medication">Continue medication (not ready to stop)</Option>
+          <Option value="defer_decision">Defer decision (needs time to think)</Option>
+        </Options>
+      </Field>
+
+      <Field id="patient_understanding_confirmed" type="radio" required="true">
+        <Label>Patient Understanding Confirmed?</Label>
+        <Options>
+          <Option value="yes">Yes - patient understands risks, withdrawal symptoms, and need for slow taper</Option>
+          <Option value="no">No - requires further discussion</Option>
+        </Options>
+        <Guidance>Ensure patient has realistic expectations about withdrawal and relapse risk</Guidance>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- TAPERING PROTOCOL -->
+  <ConditionalSection show_if="patient_decision_after_discussion='proceed_taper'">
+    <Section id="tapering_protocol">
+      <Title>Tapering Protocol</Title>
+      <Description>Evidence-based tapering schedule based on medication and individual factors</Description>
+
+      <Field id="medication_half_life" type="select" required="true">
+        <Label>Medication Half-Life Category</Label>
+        <Options>
+          <Option value="long">Long half-life (fluoxetine 4-6 days) - slower taper less critical</Option>
+          <Option value="medium">Medium half-life (sertraline, citalopram, escitalopram ~1 day) - standard taper</Option>
+          <Option value="short">Short half-life (paroxetine, venlafaxine ~12 hours) - very slow taper essential</Option>
+        </Options>
+        <Guidance>
+          - Long (fluoxetine): Self-tapering due to long half-life, withdrawal less severe
+          - Medium (sertraline, citalopram, escitalopram): Taper over 4-8+ weeks
+          - Short (paroxetine, venlafaxine): Taper over 8-12+ weeks minimum, very high withdrawal risk
+        </Guidance>
+      </Field>
+
+      <Field id="duration_on_medication" type="select" required="true">
+        <Label>Duration on Medication</Label>
+        <Options>
+          <Option value="short_term">&lt; 1 year</Option>
+          <Option value="medium_term">1-3 years</Option>
+          <Option value="long_term">&gt; 3 years</Option>
+        </Options>
+        <Guidance>Longer duration on medication requires slower taper</Guidance>
+      </Field>
+
+      <Field id="current_dose_vs_starting_dose" type="select" required="true">
+        <Label>Current Dose Compared to Starting Dose</Label>
+        <Options>
+          <Option value="starting_dose">Same as starting dose (low dose)</Option>
+          <Option value="increased">Increased from starting dose (medium-high dose)</Option>
+        </Options>
+        <Guidance>If on higher dose, may need to reduce to starting dose first, then taper further</Guidance>
+      </Field>
+
+      <Field id="tapering_speed" type="select" required="true">
+        <Label>Tapering Speed Recommended</Label>
+        <Options>
+          <Option value="very_slow">Very slow (12-24+ weeks) - High risk: short half-life, long duration on med, previous withdrawal issues, patient anxious</Option>
+          <Option value="slow">Slow (8-12 weeks) - Standard for most medications</Option>
+          <Option value="moderate">Moderate (4-6 weeks) - Long half-life (fluoxetine), low risk</Option>
+        </Options>
+        <AutoPopulate>Based on half-life, duration, and risk factors</AutoPopulate>
+        <Alert condition="medication_half_life='short' AND value='moderate'">Short half-life medication (paroxetine, venlafaxine) should use very slow taper - moderate taper will cause severe withdrawal</Alert>
+      </Field>
+
+      <Field id="tapering_schedule_specific" type="textarea" required="true">
+        <Label>Specific Tapering Schedule</Label>
+        <Placeholder>Document exact tapering schedule, e.g.:
+- Weeks 1-2: 100mg daily (current dose)
+- Weeks 3-4: 75mg daily (25% reduction)
+- Weeks 5-6: 50mg daily
+- Weeks 7-8: 25mg daily
+- Weeks 9-10: 25mg every other day
+- Week 11+: Stop
+Monitor at each step, can slow down if withdrawal symptoms</Placeholder>
+        <Guidance>General principle: Reduce by 25% every 2-4 weeks, slower as get to lower doses</Guidance>
+      </Field>
+
+      <Field id="tapering_method" type="select" required="true">
+        <Label>Tapering Method</Label>
+        <Options>
+          <Option value="dose_reduction">Dose reduction (reduce dose at constant frequency)</Option>
+          <Option value="alternate_day">Alternate day dosing (for final stages)</Option>
+          <Option value="liquid_formulation">Liquid formulation (allows finer dose adjustments)</Option>
+          <Option value="tablet_splitting">Tablet splitting (if tablets scored/appropriate)</Option>
+        </Options>
+      </Field>
+
+      <Field id="tapering_flexibility" type="radio" required="true">
+        <Label>Patient Understands Tapering Can Be Slowed?</Label>
+        <Options>
+          <Option value="yes">Yes - patient knows can slow down or pause if withdrawal symptoms</Option>
+          <Option value="no">No - needs further discussion</Option>
+        </Options>
+        <Guidance>Emphasize: Not a race. If withdrawal symptoms occur, slow down or pause. Individualized approach.</Guidance>
+      </Field>
+
+      <Field id="withdrawal_symptom_education_provided" type="checkbox" required="true">
+        <Label>Withdrawal Symptom Education Provided</Label>
+        <Options>
+          <Option value="common_symptoms">Common withdrawal symptoms explained (dizziness, electric shocks, flu-like, anxiety, insomnia, vivid dreams)</Option>
+          <Option value="timeline">Timeline explained (start 2-7 days after dose reduction, peak 1-2 weeks, usually resolve 2-6 weeks)</Option>
+          <Option value="vs_relapse">How to distinguish withdrawal from relapse</Option>
+          <Option value="management">Management strategies (slow taper, symptomatic relief, reassurance)</Option>
+          <Option value="when_to_contact">When to contact doctor (severe symptoms, persistent symptoms, concern about relapse)</Option>
+        </Options>
+      </Field>
+
+      <Field id="relapse_prevention_strategies" type="checkbox" required="true">
+        <Label>Relapse Prevention Strategies Discussed</Label>
+        <Options>
+          <Option value="maintain_exercise">Maintain exercise (150 min/week) throughout taper and after</Option>
+          <Option value="maintain_sleep">Maintain good sleep</Option>
+          <Option value="maintain_social">Maintain social connections</Option>
+          <Option value="therapy_booster">Consider therapy booster sessions during taper</Option>
+          <Option value="mbct">Consider MBCT (Mindfulness-Based Cognitive Therapy) for relapse prevention</Option>
+          <Option value="early_warning_signs">Patient knows early warning signs of relapse</Option>
+        </Options>
+        <Guidance>Lifestyle interventions crucial during taper - reduce relapse risk</Guidance>
+      </Field>
+
+      <Field id="tapering_start_date" type="date" required="true">
+        <Label>Tapering Start Date</Label>
+      </Field>
+
+      <Field id="expected_complete_stop_date" type="date" required="true">
+        <Label>Expected Complete Stop Date (if taper goes as planned)</Label>
+        <Guidance>May extend if withdrawal symptoms require slower taper</Guidance>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- MONITORING DURING TAPERING -->
+  <ConditionalSection show_if="patient_decision_after_discussion='proceed_taper'">
+    <Section id="monitoring_during_taper">
+      <Title>Monitoring During Tapering</Title>
+      <Description>To be completed at each monitoring visit during taper</Description>
+
+      <Field id="current_taper_stage" type="textarea" required="true">
+        <Label>Current Taper Stage</Label>
+        <Placeholder>e.g., "Week 5 of taper, currently on 50mg daily (reduced from 100mg)"</Placeholder>
+      </Field>
+
+      <Field id="weeks_since_last_dose_reduction" type="number" required="true">
+        <Label>Weeks Since Last Dose Reduction</Label>
+        <Range min="0" max="52"/>
+      </Field>
+
+      <Field id="phq9_current_taper" type="number" required="true">
+        <Label>Current PHQ-9 Score</Label>
+        <Range min="0" max="27"/>
+        <Alert condition="value &gt;= 5">PHQ-9 ≥ 5 - may indicate relapse. Distinguish from withdrawal.</Alert>
+        <Alert condition="value &gt;= 10">PHQ-9 ≥ 10 - likely relapse. Consider resuming previous dose.</Alert>
+      </Field>
+
+      <Field id="withdrawal_symptoms_present" type="radio" required="true">
+        <Label>Withdrawal Symptoms Present?</Label>
+        <Options>
+          <Option value="yes">Yes</Option>
+          <Option value="no">No</Option>
+        </Options>
+      </Field>
+
+      <ConditionalSection show_if="withdrawal_symptoms_present='yes'">
+        <Field id="withdrawal_symptoms_specific" type="checkbox" required="true">
+          <Label>Specific Withdrawal Symptoms</Label>
+          <Options>
+            <Option value="dizziness">Dizziness, vertigo, lightheadedness</Option>
+            <Option value="electric_shocks">"Electric shock" sensations (brain zaps)</Option>
+            <Option value="flu_like">Flu-like symptoms (fatigue, headache, body aches)</Option>
+            <Option value="nausea">Nausea, GI upset</Option>
+            <Option value="insomnia">Insomnia, vivid dreams, nightmares</Option>
+            <Option value="anxiety">Increased anxiety, agitation, restlessness</Option>
+            <Option value="irritability">Irritability, mood swings</Option>
+            <Option value="sensory_disturbances">Sensory disturbances (strange tastes, sounds)</Option>
+            <Option value="difficulty_concentrating">Difficulty concentrating</Option>
+            <Option value="crying_spells">Crying spells</Option>
+          </Options>
+        </Field>
+
+        <Field id="withdrawal_symptom_severity" type="select" required="true">
+          <Label>Withdrawal Symptom Severity</Label>
+          <Options>
+            <Option value="mild">Mild (noticeable but tolerable, not affecting function)</Option>
+            <Option value="moderate">Moderate (bothersome, some impact on function)</Option>
+            <Option value="severe">Severe (significantly affecting function, distressing)</Option>
+          </Options>
+        </Field>
+
+        <Field id="withdrawal_vs_relapse_assessment" type="select" required="true">
+          <Label>Clinical Assessment: Withdrawal vs. Relapse</Label>
+          <Options>
+            <Option value="withdrawal">Withdrawal symptoms (physical symptoms prominent, started within days of dose reduction, PHQ-9 still low)</Option>
+            <Option value="relapse">Relapse (core depression symptoms return, PHQ-9 ≥ 10, occurred weeks after dose reduction)</Option>
+            <Option value="unclear">Unclear - difficult to distinguish</Option>
+          </Options>
+          <Guidance>
+            Withdrawal: Physical symptoms (dizziness, zaps, flu-like), start 2-7 days after reduction, transient
+            Relapse: Psychological symptoms (low mood, anhedonia, hopelessness), gradual onset, persistent
+          </Guidance>
+        </Field>
+      </ConditionalSection>
+
+      <Field id="taper_adjustment_needed" type="select" required="true">
+        <Label>Taper Adjustment Needed?</Label>
+        <Options>
+          <Option value="continue_as_planned">Continue taper as planned (no/mild symptoms)</Option>
+          <Option value="slow_down">Slow down taper (moderate withdrawal symptoms)</Option>
+          <Option value="pause_taper">Pause taper (severe withdrawal symptoms - hold at current dose until symptoms resolve)</Option>
+          <Option value="increase_dose_withdrawal">Increase dose back up one step (intolerable withdrawal)</Option>
+          <Option value="resume_full_dose">Resume full dose (suspected relapse)</Option>
+        </Options>
+      </Field>
+
+      <Field id="taper_adjustment_details" type="textarea">
+        <Label>Taper Adjustment Details (if adjustment needed)</Label>
+        <Placeholder>Specific adjustment made and rationale, e.g., "Severe dizziness and electric shocks on reducing to 50mg. Increased back to 75mg, will hold for 4 weeks then try smaller reduction (to 62.5mg using liquid formulation)."</Placeholder>
+      </Field>
+
+      <Field id="withdrawal_symptom_management" type="checkbox">
+        <Label>Withdrawal Symptom Management Strategies</Label>
+        <Options>
+          <Option value="reassurance">Reassurance - symptoms temporary, will resolve</Option>
+          <Option value="symptomatic_treatment">Symptomatic treatment (antihistamines for dizziness, analgesics for headache)</Option>
+          <Option value="slower_taper">Slower taper or smaller dose reductions</Option>
+          <Option value="liquid_formulation">Switch to liquid formulation for finer adjustments</Option>
+          <Option value="temporarily_increase">Temporarily increase dose slightly then resume slower taper</Option>
+        </Options>
+      </Field>
+
+      <Field id="relapse_prevention_maintained" type="radio" required="true">
+        <Label>Patient Maintaining Relapse Prevention Strategies?</Label>
+        <Options>
+          <Option value="yes">Yes - exercising, sleep good, social connections maintained</Option>
+          <Option value="partial">Partial</Option>
+          <Option value="no">No - lifestyle interventions lapsed</Option>
+        </Options>
+        <Alert condition="value='no'">Lifestyle interventions lapsed - strongly encourage reestablishing (reduces relapse risk significantly)</Alert>
+      </Field>
+
+      <Field id="next_monitoring_visit_taper" type="date" required="true">
+        <Label>Next Monitoring Visit</Label>
+        <Guidance>Monitor closely during taper: every 2-4 weeks, more frequently if withdrawal symptoms or relapse concern</Guidance>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- POST-DISCONTINUATION MONITORING -->
+  <ConditionalSection show_if="medication_status='fully_stopped'">
+    <Section id="post_discontinuation_monitoring">
+      <Title>Post-Discontinuation Monitoring</Title>
+      <Description>Monitoring after medication completely stopped - detect relapse early</Description>
+
+      <Field id="weeks_since_complete_stop" type="number" required="true">
+        <Label>Weeks Since Medication Completely Stopped</Label>
+        <Range min="0" max="260"/>
+      </Field>
+
+      <Field id="phq9_post_stop" type="number" required="true">
+        <Label>Current PHQ-9 Score</Label>
+        <Range min="0" max="27"/>
+        <Alert condition="value &gt;= 5">PHQ-9 ≥ 5 - early signs of relapse</Alert>
+        <Alert condition="value &gt;= 10">PHQ-9 ≥ 10 - relapse occurring, consider restarting treatment</Alert>
+      </Field>
+
+      <Field id="relapse_status" type="select" required="true">
+        <Label>Relapse Status</Label>
+        <Options>
+          <Option value="no_relapse">No relapse - maintaining remission (PHQ-9 &lt; 5)</Option>
+          <Option value="subsyndromal">Subsyndromal symptoms (PHQ-9 5-9, not full relapse yet)</Option>
+          <Option value="relapse">Relapse (PHQ-9 ≥ 10, depression returned)</Option>
+        </Options>
+      </Field>
+
+      <ConditionalSection show_if="relapse_status IN ('subsyndromal', 'relapse')">
+        <Field id="relapse_timeframe" type="select" required="true">
+          <Label>Relapse Timeframe</Label>
+          <Options>
+            <Option value="early">&lt; 3 months after stopping</Option>
+            <Option value="medium">3-12 months after stopping</Option>
+            <Option value="late">&gt; 12 months after stopping</Option>
+          </Options>
+        </Field>
+
+        <Field id="relapse_triggers" type="checkbox">
+          <Label>Possible Relapse Triggers</Label>
+          <Options>
+            <Option value="life_stressor">New life stressor (bereavement, job loss, relationship, etc.)</Option>
+            <Option value="stopped_exercise">Stopped exercising</Option>
+            <Option value="sleep_deteriorated">Sleep deteriorated</Option>
+            <Option value="social_isolation">Increased social isolation</Option>
+            <Option value="seasonal">Seasonal (winter onset)</Option>
+            <Option value="no_trigger">No obvious trigger</Option>
+          </Options>
+        </Field>
+
+        <Field id="relapse_management_plan" type="select" required="true">
+          <Label>Relapse Management Plan</Label>
+          <Options>
+            <Option value="watchful_waiting">Watchful waiting with close monitoring (if subsyndromal only)</Option>
+            <Option value="intensify_lifestyle">Intensify lifestyle interventions</Option>
+            <Option value="therapy">Start or resume psychological therapy</Option>
+            <Option value="restart_medication">Restart antidepressant medication</Option>
+            <Option value="combination">Combination (medication + therapy + lifestyle)</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="relapse_management_plan='restart_medication'">
+          <Field id="restart_medication_choice" type="select" required="true">
+            <Label>Medication to Restart</Label>
+            <Options>
+              <Option value="same_medication">Same medication previously on (known to work)</Option>
+              <Option value="different_medication">Different medication (specify reason)</Option>
+            </Options>
+          </Field>
+
+          <Field id="restart_dose" type="text" required="true">
+            <Label>Restart Dose</Label>
+            <Placeholder>Usually restart at previously effective dose</Placeholder>
+          </Field>
+
+          <Field id="long_term_treatment_plan_after_relapse" type="select" required="true">
+            <Label>Long-Term Treatment Plan After Relapse</Label>
+            <Options>
+              <Option value="longer_continuation">Continue for longer duration (e.g., 2 years) then reassess stopping</Option>
+              <Option value="indefinite">Indefinite treatment (given relapse on stopping)</Option>
+            </Options>
+            <Guidance>Relapse after stopping indicates patient may need long-term treatment</Guidance>
+          </Field>
+        </ConditionalSection>
+      </ConditionalSection>
+
+      <Field id="withdrawal_symptoms_post_stop" type="radio" required="true">
+        <Label>Withdrawal Symptoms Still Present Post-Discontinuation?</Label>
+        <Options>
+          <Option value="yes">Yes (persistent withdrawal)</Option>
+          <Option value="no">No (withdrawal resolved)</Option>
+        </Options>
+      </Field>
+
+      <ConditionalSection show_if="withdrawal_symptoms_post_stop='yes'">
+        <Field id="persistent_withdrawal_duration" type="number">
+          <Label>Duration of Persistent Withdrawal (weeks since stopped)</Label>
+        </Field>
+
+        <Field id="persistent_withdrawal_management" type="checkbox">
+          <Label>Management of Persistent Withdrawal</Label>
+          <Options>
+            <Option value="reassurance">Reassurance - most withdrawal resolves eventually (can take 3-6 months)</Option>
+            <Option value="symptomatic">Symptomatic treatment</Option>
+            <Option value="restart_taper_slower">Consider restarting medication and tapering much more slowly</Option>
+            <Option value="specialist_referral">Specialist referral if severe/prolonged</Option>
+          </Options>
+        </Field>
+      </ConditionalSection>
+
+      <Field id="lifestyle_maintained_post_stop" type="radio" required="true">
+        <Label>Lifestyle Interventions Maintained Post-Stop?</Label>
+        <Options>
+          <Option value="yes">Yes - exercise, sleep, social connections maintained</Option>
+          <Option value="partial">Partial</Option>
+          <Option value="no">No</Option>
+        </Options>
+        <Alert condition="value='no'">Lifestyle not maintained - high relapse risk, strongly encourage reestablishing</Alert>
+      </Field>
+
+      <Field id="post_stop_monitoring_frequency" type="select" required="true">
+        <Label>Post-Discontinuation Monitoring Frequency</Label>
+        <Options>
+          <Option value="2_weeks">Every 2 weeks (first 1-2 months after stopping)</Option>
+          <Option value="monthly">Monthly (months 3-6 after stopping)</Option>
+          <Option value="3_monthly">Every 3 months (months 6-12 after stopping)</Option>
+          <Option value="6_monthly">Every 6 months (beyond 12 months if stable)</Option>
+        </Options>
+        <Guidance>Highest relapse risk in first 6 months after stopping - monitor closely</Guidance>
+      </Field>
+
+      <Field id="next_post_stop_monitoring" type="date" required="true">
+        <Label>Next Post-Discontinuation Monitoring Visit</Label>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- PATIENT DECISION TO CONTINUE MEDICATION -->
+  <ConditionalSection show_if="patient_decision_after_discussion='continue_medication'">
+    <Section id="decision_continue">
+      <Title>Decision to Continue Medication</Title>
+
+      <Field id="reason_continue" type="checkbox" required="true">
+        <Label>Patient Reason for Continuing</Label>
+        <Options>
+          <Option value="fear_relapse">Fears relapse</Option>
+          <Option value="previous_relapse">Had relapse when stopped previously</Option>
+          <Option value="recurrent_depression">History of recurrent depression</Option>
+          <Option value="side_effects_acceptable">Side effects acceptable, medication working well</Option>
+          <Option value="life_stressors">Current life stressors, not good time to stop</Option>
+          <Option value="not_ready">Not ready psychologically</Option>
+        </Options>
+      </Field>
+
+      <Field id="long_term_treatment_plan" type="select" required="true">
+        <Label>Long-Term Treatment Plan</Label>
+        <Options>
+          <Option value="continue_review_1_year">Continue, review stopping in 1 year</Option>
+          <Option value="continue_review_2_years">Continue, review stopping in 2 years</Option>
+          <Option value="indefinite">Indefinite treatment (recurrent depression)</Option>
+        </Options>
+      </Field>
+
+      <Field id="monitoring_while_continuing" type="text" required="true">
+        <Label>Monitoring Plan While Continuing</Label>
+        <DefaultValue>PHQ-9 every 6-12 months to ensure maintaining remission. Annual discussion about whether to continue or stop.</DefaultValue>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- CLINICIAN NOTES -->
+  <Section id="clinician_notes_deprescribing">
+    <Title>Clinician Notes</Title>
+
+    <Field id="additional_notes_deprescribing" type="textarea">
+      <Label>Additional Clinical Notes</Label>
+      <Placeholder>Any additional relevant information</Placeholder>
+    </Field>
+
+    <Field id="deprescribing_clinician" type="text" required="true">
+      <Label>Clinician Name</Label>
+    </Field>
+
+    <Field id="deprescribing_date" type="date" required="true">
+      <Label>Date</Label>
+      <DefaultValue>Today</DefaultValue>
+    </Field>
+  </Section>
+
+  <!-- CLINICAL DECISION SUPPORT RULES -->
+  <ClinicalDecisionSupport>
+    <Rule id="not_in_remission_stop_not_recommended">
+      <Condition>current_phq9_score &gt;= 5</Condition>
+      <Alert level="warning">Patient not in remission (PHQ-9 ≥ 5). Stopping medication NOT recommended per NICE guideline. Continue treatment until achieve and maintain remission for 6-12 months.</Alert>
+    </Rule>
+
+    <Rule id="remission_less_than_6_months">
+      <Condition>remission_duration_months &lt; 6</Condition>
+      <Alert level="warning">Remission &lt; 6 months. NICE recommends continuing treatment for 6-12 months after remission to prevent relapse. Consider waiting.</Alert>
+    </Rule>
+
+    <Rule id="recurrent_depression_long_term_treatment">
+      <Condition>depression_history='recurrent_3plus'</Condition>
+      <Alert level="info">Recurrent depression (3+ episodes). Consider long-term/indefinite treatment. If stopping attempted, very slow taper and close monitoring essential.</Alert>
+    </Rule>
+
+    <Rule id="previous_relapse_on_stopping">
+      <Condition>previous_relapse_on_stopping='yes'</Condition>
+      <Alert level="warning">Patient relapsed when stopped medication previously. High risk of relapse again. Consider long-term treatment or very slow taper (&gt; 6 months) with close monitoring.</Alert>
+    </Rule>
+
+    <Rule id="short_halflife_rapid_taper">
+      <Condition>medication_half_life='short' AND tapering_speed NOT IN ('very_slow', 'slow')</Condition>
+      <Alert level="urgent">Short half-life medication (paroxetine, venlafaxine) with rapid taper. HIGH RISK of severe withdrawal. Use very slow taper (8-24+ weeks) with small dose reductions.</Alert>
+    </Rule>
+
+    <Rule id="withdrawal_symptoms_severe">
+      <Condition>withdrawal_symptom_severity='severe'</Condition>
+      <Alert level="warning">Severe withdrawal symptoms. SLOW DOWN or PAUSE taper. May need to increase dose back up one step, then taper more slowly. Consider liquid formulation for finer dose adjustments.</Alert>
+    </Rule>
+
+    <Rule id="relapse_during_taper">
+      <Condition>phq9_current_taper &gt;= 10 AND withdrawal_vs_relapse_assessment='relapse'</Condition>
+      <Alert level="urgent">Relapse during taper (PHQ-9 ≥ 10). Consider resuming previous effective dose. Patient may need long-term treatment.</Alert>
+    </Rule>
+
+    <Rule id="relapse_post_discontinuation">
+      <Condition>relapse_status='relapse'</Condition>
+      <Alert level="warning">Relapse after stopping medication. Restart treatment. Consider long-term/indefinite treatment given relapse on stopping.</Alert>
+    </Rule>
+
+    <Rule id="lifestyle_not_maintained_high_relapse_risk">
+      <Condition>lifestyle_maintained_post_stop='no'</Condition>
+      <Alert level="warning">Lifestyle interventions not maintained post-stopping. High relapse risk. Strongly encourage reestablishing exercise (150 min/week), good sleep, social connections.</Alert>
+    </Rule>
+
+    <Rule id="current_stressors_defer_stopping">
+      <Condition>current_life_stressors='yes'</Condition>
+      <Alert level="info">Current significant life stressors present. Consider deferring deprescribing until situation stabilizes (reduces relapse risk).</Alert>
+    </Rule>
+  </ClinicalDecisionSupport>
+
+  <!-- MEDICATION-SPECIFIC TAPERING GUIDANCE -->
+  <MedicationSpecificGuidance>
+    <Medication name="Sertraline">
+      <HalfLife>26 hours</HalfLife>
+      <WithdrawalRisk>Moderate</WithdrawalRisk>
+      <TaperingProtocol>
+        - Starting dose usually 50mg
+        - If on higher dose (100-200mg), reduce to 50mg over 4-8 weeks first
+        - From 50mg: Reduce to 25mg for 2-4 weeks
+        - Then 25mg alternate days for 2 weeks
+        - Then stop
+        - Total taper time: 8-12 weeks minimum
+      </TaperingProtocol>
+      <Notes>Available as 50mg and 100mg tablets. 25mg not standard - may need to split 50mg tablets or use liquid formulation (50mg/ml solution).</Notes>
+    </Medication>
+
+    <Medication name="Fluoxetine">
+      <HalfLife>4-6 days (active metabolite up to 16 days)</HalfLife>
+      <WithdrawalRisk>Low (self-tapering due to long half-life)</WithdrawalRisk>
+      <TaperingProtocol>
+        - Long half-life means "self-tapering"
+        - Can often stop without gradual taper (discuss with patient)
+        - If prefer taper: Reduce to 20mg for 2 weeks, then stop
+        - Or alternate day dosing for 1-2 weeks then stop
+        - Total taper time: 2-4 weeks often sufficient
+      </TaperingProtocol>
+      <Notes>Withdrawal symptoms less severe and less common than other SSRIs due to long half-life. Preferred SSRI if patient has concerns about withdrawal.</Notes>
+    </Medication>
+
+    <Medication name="Citalopram">
+      <HalfLife>33 hours</HalfLife>
+      <WithdrawalRisk>Moderate</WithdrawalRisk>
+      <TaperingProtocol>
+        - Standard dose 20mg
+        - Reduce to 10mg for 2-4 weeks
+        - Then 10mg alternate days for 2 weeks
+        - Then stop
+        - Total taper time: 6-8 weeks
+      </TaperingProtocol>
+      <Notes>Available as 10mg, 20mg, 40mg tablets. Also liquid formulation (40mg/ml drops) for fine dose adjustments.</Notes>
+    </Medication>
+
+    <Medication name="Escitalopram">
+      <HalfLife>27-32 hours</HalfLife>
+      <WithdrawalRisk>Moderate</WithdrawalRisk>
+      <TaperingProtocol>
+        - Standard dose 10mg
+        - Reduce to 5mg for 2-4 weeks
+        - Then 5mg alternate days for 2 weeks
+        - Then stop
+        - Total taper time: 6-8 weeks
+      </TaperingProtocol>
+      <Notes>Available as 5mg, 10mg, 20mg tablets. Also liquid formulation for fine adjustments.</Notes>
+    </Medication>
+
+    <Medication name="Paroxetine">
+      <HalfLife>21 hours (but potent anticholinergic effects cause severe withdrawal)</HalfLife>
+      <WithdrawalRisk>VERY HIGH - worst SSRI for withdrawal</WithdrawalRisk>
+      <TaperingProtocol>
+        - MUST taper very slowly
+        - From 20mg: Reduce to 15mg for 3-4 weeks
+        - Then 10mg for 3-4 weeks
+        - Then 5mg for 3-4 weeks
+        - Then 2.5mg (half of 5mg) for 2-3 weeks
+        - Then 2.5mg alternate days for 2 weeks
+        - Then stop
+        - Total taper time: 12-20+ weeks minimum
+        - Consider liquid formulation (10mg/5ml suspension) for very gradual reductions
+      </TaperingProtocol>
+      <Notes>Paroxetine causes most severe and common withdrawal symptoms of any SSRI. Very slow taper essential. If severe withdrawal on tapering, consider switching to fluoxetine first (cross-taper), then stop fluoxetine (easier withdrawal).</Notes>
+      <Warning>DO NOT stop abruptly - severe withdrawal almost guaranteed</Warning>
+    </Medication>
+
+    <Medication name="Venlafaxine">
+      <HalfLife>5 hours (11 hours including active metabolite)</HalfLife>
+      <WithdrawalRisk>VERY HIGH - short half-life SNRI</WithdrawalRisk>
+      <TaperingProtocol>
+        - MUST taper very slowly
+        - Example from 150mg:
+          - Reduce to 112.5mg for 3-4 weeks
+          - Then 75mg for 3-4 weeks
+          - Then 37.5mg for 3-4 weeks
+          - Then 18.75mg (use liquid or tablet splitting) for 2-3 weeks
+          - Then alternate day dosing for 2 weeks
+          - Then stop
+        - Total taper time: 12-20+ weeks minimum
+        - Consider dose reductions of no more than 25mg every 3-4 weeks
+      </TaperingProtocol>
+      <Notes>Venlafaxine has very high withdrawal rate - 60-70% experience withdrawal symptoms. Available as 37.5mg, 75mg, 150mg XL. May need to split tablets or compound liquid for intermediate doses. Monitor blood pressure during taper (venlafaxine can raise BP - may drop when stopping).</Notes>
+      <Warning>Severe withdrawal common - "brain zaps", dizziness, nausea. Very slow taper essential.</Warning>
+    </Medication>
+
+    <Medication name="Duloxetine">
+      <HalfLife>12 hours</HalfLife>
+      <WithdrawalRisk>High</WithdrawalRisk>
+      <TaperingProtocol>
+        - From 60mg: Reduce to 30mg for 3-4 weeks
+        - Then 20mg for 2-3 weeks (may need to open capsule and remove beads - discuss with pharmacist)
+        - Then alternate day dosing
+        - Then stop
+        - Total taper time: 8-12 weeks
+      </TaperingProtocol>
+      <Notes>Available as 30mg and 60mg capsules (delayed-release). Intermediate doses challenging - may need to count beads inside capsule or work with compounding pharmacist.</Notes>
+    </Medication>
+
+    <Medication name="Mirtazapine">
+      <HalfLife>20-40 hours</HalfLife>
+      <WithdrawalRisk>Moderate</WithdrawalRisk>
+      <TaperingProtocol>
+        - From 30mg: Reduce to 15mg for 2-4 weeks
+        - Then 7.5mg (half tablet) for 2-3 weeks
+        - Then 7.5mg alternate days for 1-2 weeks
+        - Then stop
+        - Total taper time: 6-10 weeks
+      </TaperingProtocol>
+      <Notes>Available as 15mg, 30mg, 45mg tablets (also orodispersible). Sedating effect may reduce during taper - warn patient sleep may be affected. Insomnia common withdrawal symptom.</Notes>
+    </Medication>
+  </MedicationSpecificGuidance>
+
+  <!-- AUDIT AND QUALITY METRICS -->
+  <AuditFields>
+    <Metric id="appropriate_duration_before_stopping">
+      <Label>Appropriate Duration Before Stopping Attempted</Label>
+      <Calculation>Percentage with ≥ 6 months remission before deprescribing</Calculation>
+    </Metric>
+
+    <Metric id="slow_taper_used">
+      <Label>Slow Taper Used (≥ 4 weeks)</Label>
+      <Calculation>Percentage using taper ≥ 4 weeks (per NICE)</Calculation>
+    </Metric>
+
+    <Metric id="withdrawal_symptoms_documented">
+      <Label>Withdrawal Symptoms Documented During Taper</Label>
+      <Calculation>Percentage with systematic withdrawal monitoring</Calculation>
+    </Metric>
+
+    <Metric id="successful_discontinuation_rate">
+      <Label>Successful Discontinuation Rate (12 months)</Label>
+      <Calculation>Percentage remaining off medication 12 months after discontinuation without relapse</Calculation>
+    </Metric>
+
+    <Metric id="relapse_rate_after_stopping">
+      <Label>Relapse Rate After Stopping</Label>
+      <Calculation>Percentage experiencing relapse (PHQ-9 ≥ 10) within 12 months of stopping</Calculation>
+    </Metric>
+
+    <Metric id="restart_rate">
+      <Label>Medication Restart Rate</Label>
+      <Calculation>Percentage restarting medication within 12 months of stopping</Calculation>
+    </Metric>
+  </AuditFields>
+
+  <!-- INTEGRATION GUIDANCE -->
+  <IntegrationGuidance>
+    <System name="EMIS">
+      <Instructions>
+        1. Create deprescribing template
+        2. Link to treatment plan and monitoring templates
+        3. Set up alerts for high-risk medications (paroxetine, venlafaxine)
+        4. Automated tapering schedule generation
+        5. Reminders for monitoring visits during taper
+        6. Flag in patient record "TAPERING ANTIDEPRESSANT" for continuity
+      </Instructions>
+    </System>
+
+    <System name="SystmOne">
+      <Instructions>
+        1. Deprescribing template in care plan
+        2. Link to repeat prescription for dose adjustments
+        3. Automated tasks for monitoring during taper
+        4. Post-discontinuation follow-up reminders
+      </Instructions>
+    </System>
+
+    <System name="Vision">
+      <Instructions>
+        1. Custom deprescribing form
+        2. Integration with prescription module for dose changes
+        3. Diary reminders for monitoring
+      </Instructions>
+    </System>
+  </IntegrationGuidance>
+
+  <UsageNotes>
+    <Note>Use this template when considering stopping antidepressant medication after achieving remission.</Note>
+    <Note>Not all patients should stop - recurrent depression (3+ episodes) may warrant long-term treatment.</Note>
+    <Note>Shared decision-making essential - patient preference and risk/benefit discussion.</Note>
+    <Note>Slow tapering (≥ 4 weeks, ideally 8-12+ weeks) reduces withdrawal symptoms.</Note>
+    <Note>Short half-life medications (paroxetine, venlafaxine) require very slow taper (12-20+ weeks).</Note>
+    <Note>Monitor closely during taper - distinguish withdrawal from relapse.</Note>
+    <Note>Withdrawal symptoms usually resolve 2-6 weeks after each dose reduction.</Note>
+    <Note>If relapse occurs during/after taper, consider long-term treatment.</Note>
+    <Note>Maintain lifestyle interventions (exercise, sleep, social) throughout taper and after - reduces relapse risk.</Note>
+    <Note>Highest relapse risk in first 6 months after stopping - monitor closely.</Note>
+  </UsageNotes>
+
+</EHRTemplate>

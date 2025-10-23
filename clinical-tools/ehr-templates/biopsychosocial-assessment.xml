@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EQUILIBRIUM Biopsychosocial Assessment Template
+  Version: 2.0
+  Last Updated: October 2025
+
+  This template provides structured data entry for comprehensive holistic assessment
+  of depression, anxiety, and related mental health presentations.
+
+  Adaptable for: EMIS, SystmOne, Vision, other UK GP systems
+
+  Implementation: Import as custom template or adapt field mappings to local EHR
+-->
+
+<ClinicalTemplate>
+  <TemplateName>EQUILIBRIUM Biopsychosocial Assessment</TemplateName>
+  <TemplateVersion>2.0</TemplateVersion>
+  <TemplateDate>2025-10-01</TemplateDate>
+  <TemplateType>Mental Health Assessment</TemplateType>
+  <EstimatedTime>10-15 minutes</EstimatedTime>
+
+  <!-- PRESENTING COMPLAINT -->
+  <Section id="presenting_complaint">
+    <SectionName>Presenting Complaint</SectionName>
+    <Fields>
+      <Field id="chief_complaint" type="text" required="true">
+        <Label>Chief Complaint</Label>
+        <Placeholder>Patient's description of main problem</Placeholder>
+      </Field>
+      <Field id="duration" type="text">
+        <Label>Duration of Symptoms</Label>
+        <Placeholder>How long has patient felt this way?</Placeholder>
+      </Field>
+      <Field id="onset" type="select">
+        <Label>Onset</Label>
+        <Options>
+          <Option value="gradual">Gradual</Option>
+          <Option value="sudden">Sudden</Option>
+          <Option value="episodic">Episodic</Option>
+        </Options>
+      </Field>
+      <Field id="triggers" type="text">
+        <Label>Precipitating Factors/Triggers</Label>
+        <Placeholder>Life events, stressors, changes</Placeholder>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- STANDARDIZED SCREENING -->
+  <Section id="screening_tools">
+    <SectionName>Standardized Screening Instruments</SectionName>
+    <Fields>
+      <Field id="phq9_score" type="number" required="true">
+        <Label>PHQ-9 Total Score</Label>
+        <Range min="0" max="27"/>
+        <AutoCalculate>Sum of PHQ-9 items 1-9</AutoCalculate>
+      </Field>
+      <Field id="phq9_severity" type="select" required="true">
+        <Label>Depression Severity</Label>
+        <Options>
+          <Option value="minimal" range="0-4">Minimal/None (0-4)</Option>
+          <Option value="mild" range="5-9">Mild (5-9)</Option>
+          <Option value="moderate" range="10-14">Moderate (10-14)</Option>
+          <Option value="moderately_severe" range="15-19">Moderately Severe (15-19)</Option>
+          <Option value="severe" range="20-27">Severe (20-27)</Option>
+        </Options>
+        <AutoPopulate>Based on PHQ-9 score</AutoPopulate>
+      </Field>
+      <Field id="phq9_q9" type="number" required="true">
+        <Label>PHQ-9 Question 9 (Suicidal Ideation)</Label>
+        <Range min="0" max="3"/>
+        <Alert condition="value>=1">ALERT: Suicidal ideation present - conduct risk assessment</Alert>
+      </Field>
+      <Field id="gad7_score" type="number">
+        <Label>GAD-7 Total Score (if anxiety symptoms)</Label>
+        <Range min="0" max="21"/>
+      </Field>
+      <Field id="gad7_severity" type="select">
+        <Label>Anxiety Severity</Label>
+        <Options>
+          <Option value="minimal" range="0-4">Minimal (0-4)</Option>
+          <Option value="mild" range="5-9">Mild (5-9)</Option>
+          <Option value="moderate" range="10-14">Moderate (10-14)</Option>
+          <Option value="severe" range="15-21">Severe (15-21)</Option>
+        </Options>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- BIOLOGICAL FACTORS -->
+  <Section id="biological_factors">
+    <SectionName>Biological Factors</SectionName>
+
+    <!-- Sleep -->
+    <Subsection id="sleep">
+      <SubsectionName>Sleep</SubsectionName>
+      <Fields>
+        <Field id="sleep_difficulty" type="checkbox_multiple">
+          <Label>Sleep Problems (check all that apply)</Label>
+          <Options>
+            <Option value="none">No sleep problems</Option>
+            <Option value="onset_insomnia">Difficulty falling asleep (&gt;30 min)</Option>
+            <Option value="maintenance_insomnia">Waking during night, difficulty returning to sleep</Option>
+            <Option value="early_awakening">Early morning awakening (2+ hours before desired)</Option>
+            <Option value="hypersomnia">Excessive sleep (&gt;9-10 hours)</Option>
+          </Options>
+        </Field>
+        <Field id="sleep_total_hours" type="number">
+          <Label>Total Sleep Time (hours per night, average)</Label>
+          <Range min="0" max="16" step="0.5"/>
+        </Field>
+        <Field id="sleep_efficiency" type="number">
+          <Label>Sleep Efficiency (%)</Label>
+          <Calculation>(Total sleep time / Time in bed) × 100</Calculation>
+          <Range min="0" max="100"/>
+        </Field>
+        <Field id="sleep_apnea_screen" type="select">
+          <Label>Sleep Apnea Screening</Label>
+          <Options>
+            <Option value="negative">Negative (no snoring, no daytime sleepiness)</Option>
+            <Option value="possible">Possible (snoring, witnessed apneas, daytime sleepiness)</Option>
+            <Option value="referred">Referred for sleep study</Option>
+          </Options>
+          <Alert condition="value='possible'">Consider sleep study referral - insomnia treatment may not work if sleep apnea present</Alert>
+        </Field>
+        <Field id="sleep_intervention_needed" type="checkbox">
+          <Label>Sleep intervention needed (CBT-I, sleep hygiene)</Label>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <!-- Nutrition and Diet -->
+    <Subsection id="nutrition">
+      <SubsectionName>Nutrition and Diet</SubsectionName>
+      <Fields>
+        <Field id="diet_quality" type="select">
+          <Label>Overall Diet Quality</Label>
+          <Options>
+            <Option value="poor">Poor (high processed foods, low fruits/vegetables)</Option>
+            <Option value="fair">Fair (some processed, some whole foods)</Option>
+            <Option value="good">Good (mostly whole foods, regular meals)</Option>
+            <Option value="mediterranean">Mediterranean-style diet</Option>
+          </Options>
+        </Field>
+        <Field id="meals_per_day" type="number">
+          <Label>Meals per Day</Label>
+          <Range min="0" max="6"/>
+        </Field>
+        <Field id="mediterranean_adherence" type="select">
+          <Label>Mediterranean Diet Adherence</Label>
+          <Options>
+            <Option value="low">Low (0-3 components)</Option>
+            <Option value="moderate">Moderate (4-6 components)</Option>
+            <Option value="high">High (7-9 components)</Option>
+          </Options>
+        </Field>
+        <Field id="nutritional_deficiency_risk" type="checkbox_multiple">
+          <Label>Nutritional Deficiency Risk Factors</Label>
+          <Options>
+            <Option value="none">None identified</Option>
+            <Option value="vegan">Vegan diet (B12 risk)</Option>
+            <Option value="poor_diet">Very poor diet variety</Option>
+            <Option value="low_sun">Low sun exposure (Vitamin D risk)</Option>
+            <Option value="menstruation">Heavy menstruation (Iron risk)</Option>
+          </Options>
+        </Field>
+        <Field id="appetite_change" type="select">
+          <Label>Appetite Change (Depression Symptom)</Label>
+          <Options>
+            <Option value="normal">Normal</Option>
+            <Option value="decreased">Decreased appetite</Option>
+            <Option value="increased">Increased appetite</Option>
+          </Options>
+        </Field>
+        <Field id="dietitian_referral" type="checkbox">
+          <Label>Dietitian referral recommended</Label>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <!-- Physical Activity -->
+    <Subsection id="physical_activity">
+      <SubsectionName>Physical Activity and Exercise</SubsectionName>
+      <Fields>
+        <Field id="exercise_minutes_per_week" type="number" required="true">
+          <Label>Total Exercise (minutes per week, moderate intensity)</Label>
+          <Range min="0" max="840"/>
+          <Alert condition="value&lt;150">Below recommended 150 min/week for depression treatment</Alert>
+        </Field>
+        <Field id="exercise_meets_guideline" type="select">
+          <Label>Meets UK Activity Guideline (150 min/week moderate)</Label>
+          <Options>
+            <Option value="yes">Yes (&gt;=150 min/week)</Option>
+            <Option value="no">No (&lt;150 min/week)</Option>
+          </Options>
+          <AutoCalculate>Based on exercise_minutes_per_week</AutoCalculate>
+        </Field>
+        <Field id="exercise_type" type="text">
+          <Label>Type of Exercise</Label>
+          <Placeholder>Walking, running, cycling, swimming, gym, etc.</Placeholder>
+        </Field>
+        <Field id="exercise_barriers" type="checkbox_multiple">
+          <Label>Barriers to Exercise (check all that apply)</Label>
+          <Options>
+            <Option value="none">No barriers</Option>
+            <Option value="time">No time</Option>
+            <Option value="motivation">Low motivation/fatigue</Option>
+            <Option value="physical">Physical health problems/pain</Option>
+            <Option value="cost">Cost</Option>
+            <Option value="weather">Weather/seasonal</Option>
+          </Options>
+        </Field>
+        <Field id="sedentary_hours_per_day" type="number">
+          <Label>Sedentary Time (hours per day sitting)</Label>
+          <Range min="0" max="24"/>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <!-- Substances -->
+    <Subsection id="substances">
+      <SubsectionName>Substance Use</SubsectionName>
+      <Fields>
+        <!-- Alcohol -->
+        <Field id="alcohol_units_per_week" type="number">
+          <Label>Alcohol (units per week)</Label>
+          <Range min="0" max="200"/>
+          <Alert condition="value&gt;14">Exceeds NICE guideline (&gt;14 units/week)</Alert>
+        </Field>
+        <Field id="alcohol_pattern" type="select">
+          <Label>Drinking Pattern</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="within_guidelines">Within guidelines (&lt;14 units/week, spread over 3+ days)</Option>
+            <Option value="exceeds_guidelines">Exceeds guidelines (&gt;14 units/week)</Option>
+            <Option value="binge">Binge drinking (6+ units in one session)</Option>
+            <Option value="daily">Daily drinking</Option>
+          </Options>
+        </Field>
+        <Field id="alcohol_as_self_medication" type="checkbox">
+          <Label>Using alcohol to cope with mood/sleep</Label>
+        </Field>
+        <!-- Caffeine -->
+        <Field id="caffeine_mg_per_day" type="number">
+          <Label>Caffeine (mg per day)</Label>
+          <Range min="0" max="2000"/>
+          <Alert condition="value&gt;400">High caffeine (&gt;400mg/day) - may worsen anxiety and sleep</Alert>
+        </Field>
+        <Field id="caffeine_timing" type="select">
+          <Label>Caffeine After 2pm</Label>
+          <Options>
+            <Option value="no">No (cut-off before 2pm)</Option>
+            <Option value="yes">Yes (consumes after 2pm)</Option>
+          </Options>
+          <Alert condition="value='yes'">Evening caffeine likely interfering with sleep</Alert>
+        </Field>
+        <!-- Other -->
+        <Field id="nicotine_use" type="select">
+          <Label>Tobacco/Nicotine Use</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="smoker">Current smoker</Option>
+            <Option value="vaper">Vaping</Option>
+            <Option value="former">Former smoker</Option>
+          </Options>
+        </Field>
+        <Field id="cannabis_use" type="select">
+          <Label>Cannabis Use</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="occasional">Occasional</Option>
+            <Option value="regular">Regular</Option>
+            <Option value="daily">Daily</Option>
+          </Options>
+        </Field>
+        <Field id="other_substance_use" type="text">
+          <Label>Other Substance Use</Label>
+          <Placeholder>Cocaine, MDMA, etc.</Placeholder>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <!-- Medical Comorbidities -->
+    <Subsection id="medical_comorbidities">
+      <SubsectionName>Medical Comorbidities and Medications</SubsectionName>
+      <Fields>
+        <Field id="relevant_medical_conditions" type="checkbox_multiple">
+          <Label>Relevant Medical Conditions</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="hypothyroidism">Hypothyroidism (check TFTs if untreated)</Option>
+            <Option value="diabetes">Diabetes</Option>
+            <Option value="cardiac">Cardiac disease</Option>
+            <Option value="chronic_pain">Chronic pain</Option>
+            <Option value="cancer">Cancer</Option>
+            <Option value="neurological">Neurological condition</Option>
+            <Option value="respiratory">COPD/Asthma</Option>
+          </Options>
+        </Field>
+        <Field id="depressogenic_medications" type="checkbox_multiple">
+          <Label>Potentially Depressogenic Medications</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="beta_blockers">Beta-blockers</Option>
+            <Option value="corticosteroids">Corticosteroids</Option>
+            <Option value="isotretinoin">Isotretinoin</Option>
+            <Option value="interferon">Interferon</Option>
+          </Options>
+        </Field>
+      </Fields>
+    </Subsection>
+  </Section>
+
+  <!-- PSYCHOLOGICAL FACTORS -->
+  <Section id="psychological_factors">
+    <SectionName>Psychological Factors</SectionName>
+    <Fields>
+      <Field id="core_symptoms" type="checkbox_multiple">
+        <Label>Core Depression Symptoms (DSM-5 Criteria)</Label>
+        <Options>
+          <Option value="depressed_mood">Depressed mood most of the day</Option>
+          <Option value="anhedonia">Markedly diminished interest/pleasure (anhedonia)</Option>
+          <Option value="weight_change">Significant weight change or appetite disturbance</Option>
+          <Option value="sleep_disturbance">Insomnia or hypersomnia</Option>
+          <Option value="psychomotor">Psychomotor agitation or retardation</Option>
+          <Option value="fatigue">Fatigue or loss of energy</Option>
+          <Option value="worthlessness">Feelings of worthlessness or excessive guilt</Option>
+          <Option value="concentration">Diminished ability to concentrate or indecisiveness</Option>
+          <Option value="suicidal_thoughts">Recurrent thoughts of death or suicide</Option>
+        </Options>
+      </Field>
+      <Field id="symptom_duration" type="select">
+        <Label>Symptom Duration</Label>
+        <Options>
+          <Option value="less_2_weeks">&lt;2 weeks</Option>
+          <Option value="2weeks_to_2months">2 weeks to 2 months</Option>
+          <Option value="2_to_6_months">2 to 6 months</Option>
+          <Option value="over_6_months">&gt;6 months</Option>
+        </Options>
+      </Field>
+      <Field id="previous_episodes" type="select">
+        <Label>Previous Depressive Episodes</Label>
+        <Options>
+          <Option value="none">None (first episode)</Option>
+          <Option value="one">One previous episode</Option>
+          <Option value="multiple">Multiple previous episodes (recurrent depression)</Option>
+        </Options>
+        <Alert condition="value='multiple'">Recurrent depression - higher relapse risk, consider longer maintenance treatment</Alert>
+      </Field>
+      <Field id="cognitive_patterns" type="checkbox_multiple">
+        <Label>Cognitive Patterns (Negative Thinking)</Label>
+        <Options>
+          <Option value="none">No significant negative patterns</Option>
+          <Option value="self_critical">Self-critical thoughts ("I'm useless", "I'm a failure")</Option>
+          <Option value="hopelessness">Hopelessness ("Things will never get better")</Option>
+          <Option value="catastrophizing">Catastrophizing ("This will end in disaster")</Option>
+          <Option value="rumination">Rumination (dwelling on problems, can't let go)</Option>
+          <Option value="worry">Excessive worry (GAD feature)</Option>
+        </Options>
+      </Field>
+      <Field id="coping_strategies_adaptive" type="text">
+        <Label>Adaptive Coping Strategies</Label>
+        <Placeholder>Exercise, talking to friends, hobbies, problem-solving, etc.</Placeholder>
+      </Field>
+      <Field id="coping_strategies_maladaptive" type="checkbox_multiple">
+        <Label>Maladaptive Coping Strategies</Label>
+        <Options>
+          <Option value="none">None identified</Option>
+          <Option value="avoidance">Avoidance/withdrawal</Option>
+          <Option value="isolation">Social isolation</Option>
+          <Option value="substance_use">Substance use</Option>
+          <Option value="self_harm">Self-harm</Option>
+        </Options>
+      </Field>
+      <Field id="trauma_history" type="select">
+        <Label>Trauma History</Label>
+        <Options>
+          <Option value="none">No significant trauma</Option>
+          <Option value="childhood">Childhood trauma</Option>
+          <Option value="adult">Adult trauma</Option>
+          <Option value="ongoing">Ongoing trauma</Option>
+          <Option value="not_disclosed">Not disclosed/not asked</Option>
+        </Options>
+        <Alert condition="value!='none' AND value!='not_disclosed'">Consider trauma-focused therapy (EMDR, TF-CBT) if PTSD symptoms</Alert>
+      </Field>
+      <Field id="ptsd_symptoms" type="checkbox">
+        <Label>PTSD Symptoms Present (re-experiencing, avoidance, hyperarousal)</Label>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- SOCIAL FACTORS -->
+  <Section id="social_factors">
+    <SectionName>Social Factors</SectionName>
+
+    <Subsection id="relationships_social_support">
+      <SubsectionName>Relationships and Social Support</SubsectionName>
+      <Fields>
+        <Field id="marital_status" type="select">
+          <Label>Relationship Status</Label>
+          <Options>
+            <Option value="single">Single</Option>
+            <Option value="partnered">Partnered</Option>
+            <Option value="married">Married</Option>
+            <Option value="divorced">Divorced/Separated</Option>
+            <Option value="widowed">Widowed</Option>
+          </Options>
+        </Field>
+        <Field id="relationship_quality" type="select">
+          <Label>Partner Relationship Quality (if applicable)</Label>
+          <Options>
+            <Option value="na">Not applicable</Option>
+            <Option value="supportive">Supportive</Option>
+            <Option value="neutral">Neutral</Option>
+            <Option value="conflictual">Conflictual/Stressful</Option>
+            <Option value="abusive">Abusive (see safeguarding)</Option>
+          </Options>
+          <Alert condition="value='abusive'">Safeguarding concern - domestic violence</Alert>
+        </Field>
+        <Field id="close_friendships" type="select">
+          <Label>Close Friendships</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="few">Few (1-2)</Option>
+            <Option value="several">Several (3+)</Option>
+          </Options>
+        </Field>
+        <Field id="social_isolation" type="checkbox">
+          <Label>Social Isolation (limited social contact, feels alone)</Label>
+        </Field>
+        <Field id="loneliness" type="checkbox">
+          <Label>Loneliness (subjective feeling of being lonely)</Label>
+        </Field>
+        <Field id="social_withdrawal" type="checkbox">
+          <Label>Social Withdrawal (avoiding people/situations as depression symptom)</Label>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <Subsection id="work_occupation">
+      <SubsectionName>Work and Occupation</SubsectionName>
+      <Fields>
+        <Field id="employment_status" type="select">
+          <Label>Employment Status</Label>
+          <Options>
+            <Option value="employed_ft">Employed Full-Time</Option>
+            <Option value="employed_pt">Employed Part-Time</Option>
+            <Option value="self_employed">Self-Employed</Option>
+            <Option value="unemployed">Unemployed</Option>
+            <Option value="student">Student</Option>
+            <Option value="retired">Retired</Option>
+            <Option value="homemaker">Homemaker</Option>
+            <Option value="sick_leave">Off Sick (Mental Health)</Option>
+          </Options>
+        </Field>
+        <Field id="work_stress_level" type="select">
+          <Label>Work Stress Level (if employed)</Label>
+          <Options>
+            <Option value="na">Not applicable</Option>
+            <Option value="none">None/Low</Option>
+            <Option value="moderate">Moderate</Option>
+            <Option value="high">High</Option>
+          </Options>
+        </Field>
+        <Field id="occupational_issues" type="checkbox_multiple">
+          <Label>Occupational Issues Contributing to Presentation</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="high_demands">High demands, low control</Option>
+            <Option value="bullying">Bullying or harassment</Option>
+            <Option value="job_security">Job insecurity</Option>
+            <Option value="unemployment_stress">Unemployment stress</Option>
+          </Options>
+        </Field>
+        <Field id="functional_impairment_work" type="select">
+          <Label>Functional Impairment at Work/Studies</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="mild">Mild (managing but struggling)</Option>
+            <Option value="moderate">Moderate (productivity significantly affected)</Option>
+            <Option value="severe">Severe (unable to work)</Option>
+          </Options>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <Subsection id="financial_housing">
+      <SubsectionName>Financial and Housing</SubsectionName>
+      <Fields>
+        <Field id="financial_stress" type="select">
+          <Label>Financial Stress</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="mild">Mild (managing but tight)</Option>
+            <Option value="moderate">Moderate (struggling to pay bills)</Option>
+            <Option value="severe">Severe (debt, unable to pay essentials)</Option>
+          </Options>
+        </Field>
+        <Field id="benefits_advice_needed" type="checkbox">
+          <Label>Benefits/Debt Advice Needed (refer to Citizens Advice)</Label>
+        </Field>
+        <Field id="housing_security" type="select">
+          <Label>Housing Security</Label>
+          <Options>
+            <Option value="secure">Secure</Option>
+            <Option value="insecure">Insecure (risk of eviction)</Option>
+            <Option value="homeless">Homeless or temporary accommodation</Option>
+          </Options>
+        </Field>
+        <Field id="housing_quality_issues" type="checkbox">
+          <Label>Housing Quality Issues (overcrowded, damp, unsafe)</Label>
+        </Field>
+      </Fields>
+    </Subsection>
+
+    <Subsection id="life_events">
+      <SubsectionName>Recent Life Events and Stressors</SubsectionName>
+      <Fields>
+        <Field id="major_life_events" type="checkbox_multiple">
+          <Label>Major Life Events (Past 12 Months)</Label>
+          <Options>
+            <Option value="none">None</Option>
+            <Option value="bereavement">Bereavement/Loss</Option>
+            <Option value="relationship_breakdown">Relationship breakdown/Divorce</Option>
+            <Option value="job_loss">Job loss/Redundancy</Option>
+            <Option value="serious_illness">Serious illness (self or loved one)</Option>
+            <Option value="moving">Moving house</Option>
+            <Option value="financial_crisis">Financial crisis</Option>
+            <Option value="legal_problems">Legal problems</Option>
+          </Options>
+        </Field>
+        <Field id="ongoing_chronic_stress" type="text">
+          <Label>Ongoing Chronic Stress</Label>
+          <Placeholder>Caregiving, chronic illness in family, relationship difficulties, etc.</Placeholder>
+        </Field>
+      </Fields>
+    </Subsection>
+  </Section>
+
+  <!-- RISK ASSESSMENT -->
+  <Section id="risk_assessment">
+    <SectionName>Risk Assessment</SectionName>
+    <Fields>
+      <!-- Suicide Risk -->
+      <Field id="suicidal_ideation" type="select" required="true">
+        <Label>Suicidal Ideation</Label>
+        <Options>
+          <Option value="none">None</Option>
+          <Option value="passive">Passive ("wish I wouldn't wake up")</Option>
+          <Option value="active_no_plan">Active thoughts, no plan</Option>
+          <Option value="active_with_plan">Active thoughts with plan</Option>
+        </Options>
+        <Alert condition="value!='none'">ALERT: Suicidal ideation present - complete full suicide risk assessment</Alert>
+      </Field>
+      <Field id="suicide_risk_level" type="select" required="true">
+        <Label>Suicide Risk Level</Label>
+        <Options>
+          <Option value="na">N/A (no ideation)</Option>
+          <Option value="low">Low (thoughts, no plan, strong protective factors)</Option>
+          <Option value="moderate">Moderate (plan but no immediate intent, some protective factors)</Option>
+          <Option value="high">High (plan + intent + means, few protective factors)</Option>
+        </Options>
+        <Alert condition="value='high'">URGENT: High suicide risk - emergency referral required</Alert>
+        <Alert condition="value='moderate'">URGENT: Moderate suicide risk - same-day mental health assessment required</Alert>
+      </Field>
+      <Field id="previous_attempts" type="checkbox">
+        <Label>Previous Suicide Attempts</Label>
+      </Field>
+      <Field id="protective_factors" type="text">
+        <Label>Protective Factors</Label>
+        <Placeholder>Reasons to live, future plans, relationships, responsibilities</Placeholder>
+      </Field>
+      <Field id="risk_action_taken" type="text">
+        <Label>Action Taken (if risk present)</Label>
+        <Placeholder>Safety plan, crisis numbers, remove means, follow-up arranged, referral to crisis team/psychiatry</Placeholder>
+      </Field>
+      <!-- Other Risks -->
+      <Field id="self_neglect" type="checkbox">
+        <Label>Self-Neglect (not eating, drinking, washing)</Label>
+      </Field>
+      <Field id="safeguarding_concerns" type="checkbox">
+        <Label>Safeguarding Concerns (vulnerable adults or children at risk)</Label>
+      </Field>
+      <Field id="safeguarding_details" type="text">
+        <Label>Safeguarding Details (if applicable)</Label>
+        <Placeholder>Who is at risk? What concerns? Referral made?</Placeholder>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- BIOPSYCHOSOCIAL FORMULATION -->
+  <Section id="formulation">
+    <SectionName>Biopsychosocial Formulation</SectionName>
+    <Fields>
+      <Field id="biological_factors_summary" type="text_area">
+        <Label>Biological Contributing Factors</Label>
+        <Placeholder>E.g., Poor sleep (4-5 hours/night), low physical activity (&lt;30 min/week), high caffeine (500mg/day), possible vitamin D deficiency</Placeholder>
+      </Field>
+      <Field id="psychological_factors_summary" type="text_area">
+        <Label>Psychological Contributing Factors</Label>
+        <Placeholder>E.g., Negative self-critical thinking ("I'm a failure"), behavioral withdrawal (stopped seeing friends), loss of meaning and purpose</Placeholder>
+      </Field>
+      <Field id="social_factors_summary" type="text_area">
+        <Label>Social Contributing Factors</Label>
+        <Placeholder>E.g., Job loss 6 months ago, financial stress, social isolation, relationship conflict</Placeholder>
+      </Field>
+      <Field id="integrated_formulation" type="text_area">
+        <Label>Integrated Formulation (Optional - narrative summary)</Label>
+        <Placeholder>Synthesize biological, psychological, and social factors into coherent understanding of presentation</Placeholder>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- NEXT STEPS - LINKS TO TREATMENT PLANNING -->
+  <Section id="next_steps">
+    <SectionName>Next Steps</SectionName>
+    <Fields>
+      <Field id="treatment_plan_created" type="checkbox">
+        <Label>Treatment Plan Created (see separate template)</Label>
+        <LinkToTemplate>EQUILIBRIUM Treatment Plan Template</LinkToTemplate>
+      </Field>
+      <Field id="shared_decision_making_conducted" type="checkbox">
+        <Label>Shared Decision-Making Conducted (options discussed, patient preference elicited)</Label>
+      </Field>
+      <Field id="patient_materials_provided" type="checkbox_multiple">
+        <Label>Patient Education Materials Provided</Label>
+        <Options>
+          <Option value="understanding_depression">Understanding Depression</Option>
+          <Option value="treatment_options">Treatment Options Explained</Option>
+          <Option value="exercise_guide">Exercise for Mental Health</Option>
+          <Option value="diet_guide">Mediterranean Diet Guide</Option>
+          <Option value="sleep_guide">Sleep Hygiene Guide</Option>
+          <Option value="decision_aid">Depression Treatment Decision Aid</Option>
+        </Options>
+      </Field>
+      <Field id="follow_up_date" type="date" required="true">
+        <Label>Follow-Up Appointment Date</Label>
+        <Guidance>
+          - Mild: 4 weeks
+          - Moderate: 2-4 weeks
+          - Severe: 1-2 weeks
+        </Guidance>
+      </Field>
+    </Fields>
+  </Section>
+
+  <!-- METADATA -->
+  <Metadata>
+    <Field id="clinician_name" type="text">
+      <Label>Clinician Name</Label>
+    </Field>
+    <Field id="assessment_date" type="date">
+      <Label>Assessment Date</Label>
+      <Default>Today</Default>
+    </Field>
+    <Field id="assessment_duration" type="number">
+      <Label>Assessment Duration (minutes)</Label>
+    </Field>
+    <Field id="template_version" type="text" readonly="true">
+      <Value>2.0</Value>
+    </Field>
+  </Metadata>
+
+</ClinicalTemplate>

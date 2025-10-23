@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EHRTemplate>
+  <TemplateName>EQUILIBRIUM Depression Treatment Plan</TemplateName>
+  <Version>2.0</Version>
+  <LastUpdated>2025-10-23</LastUpdated>
+  <Description>Structured treatment planning template for depression incorporating shared decision-making, lifestyle interventions, and evidence-based treatments. Adaptable for UK GP EHR systems (EMIS, SystmOne, Vision).</Description>
+
+  <Metadata>
+    <TemplateID>EQUIL-TREAT-PLAN-001</TemplateID>
+    <Category>Mental Health - Depression Treatment</Category>
+    <ClinicalArea>Primary Care</ClinicalArea>
+    <ReadCode>1B1..00</ReadCode>
+    <SNOMEDCode>385971000000109</SNOMEDCode>
+    <TargetConditions>
+      <Condition>Depression (F32, F33)</Condition>
+      <Condition>Depressive Episode (F32.0-F32.9)</Condition>
+      <Condition>Recurrent Depressive Disorder (F33.0-F33.9)</Condition>
+    </TargetConditions>
+  </Metadata>
+
+  <!-- ASSESSMENT SUMMARY SECTION -->
+  <Section id="assessment_summary">
+    <Title>Assessment Summary</Title>
+    <Description>Brief summary linking to completed biopsychosocial assessment</Description>
+
+    <Field id="assessment_date" type="date" required="true">
+      <Label>Assessment Date</Label>
+    </Field>
+
+    <Field id="phq9_score" type="number" required="true">
+      <Label>Current PHQ-9 Score</Label>
+      <Range min="0" max="27"/>
+      <Link>Link to most recent PHQ-9 assessment</Link>
+    </Field>
+
+    <Field id="depression_severity" type="select" required="true">
+      <Label>Depression Severity</Label>
+      <Options>
+        <Option value="subthreshold">Subthreshold (PHQ-9 &lt; 5)</Option>
+        <Option value="mild">Mild (PHQ-9 5-9)</Option>
+        <Option value="moderate">Moderate (PHQ-9 10-14)</Option>
+        <Option value="moderately_severe">Moderately Severe (PHQ-9 15-19)</Option>
+        <Option value="severe">Severe (PHQ-9 20-27)</Option>
+      </Options>
+    </Field>
+
+    <Field id="key_contributing_factors" type="textarea" required="true">
+      <Label>Key Contributing Factors (from biopsychosocial formulation)</Label>
+      <Placeholder>Brief summary: e.g., "Poor sleep (5 hours/night), sedentary lifestyle, social isolation, work stress, negative thinking patterns"</Placeholder>
+    </Field>
+
+    <Field id="suicide_risk_level" type="select" required="true">
+      <Label>Current Suicide Risk</Label>
+      <Options>
+        <Option value="none">None (PHQ-9 Q9 = 0)</Option>
+        <Option value="low">Low (PHQ-9 Q9 = 1, passive thoughts, no plan/intent)</Option>
+        <Option value="moderate">Moderate (PHQ-9 Q9 = 2-3, thoughts + some intent, no immediate plan)</Option>
+        <Option value="high">High (PHQ-9 Q9 = 3, thoughts + intent + plan)</Option>
+      </Options>
+      <Alert condition="value='high'">URGENT: High suicide risk - ensure safety plan in place, consider same-day mental health assessment</Alert>
+      <Alert condition="value='moderate'">Moderate risk: Create safety plan, close follow-up (1-2 weeks)</Alert>
+    </Field>
+  </Section>
+
+  <!-- SHARED DECISION-MAKING DOCUMENTATION -->
+  <Section id="shared_decision_making">
+    <Title>Shared Decision-Making Process</Title>
+    <Description>Document patient involvement in treatment decisions</Description>
+
+    <Field id="options_discussed" type="checkbox" required="true">
+      <Label>Treatment Options Discussed with Patient</Label>
+      <Options>
+        <Option value="watchful_waiting">Watchful waiting (for subthreshold)</Option>
+        <Option value="lifestyle">Lifestyle interventions (exercise, diet, sleep)</Option>
+        <Option value="low_intensity_therapy">Low-intensity therapy (guided self-help, online CBT)</Option>
+        <Option value="high_intensity_therapy">High-intensity therapy (CBT, IPT, Behavioral Activation)</Option>
+        <Option value="medication">Antidepressant medication (SSRIs)</Option>
+        <Option value="combination">Combination therapy (medication + therapy + lifestyle)</Option>
+        <Option value="social_prescribing">Social prescribing</Option>
+      </Options>
+      <Alert condition="severity='mild' AND NOT lifestyle AND NOT low_intensity_therapy">NICE guideline: For mild depression, consider lifestyle and low-intensity therapy before medication</Alert>
+    </Field>
+
+    <Field id="patient_preferences" type="textarea" required="true">
+      <Label>Patient Preferences and Values</Label>
+      <Placeholder>What matters most to patient? e.g., "Patient prefers to avoid medication due to concerns about side effects. Values being able to manage depression without long-term medication."</Placeholder>
+    </Field>
+
+    <Field id="patient_concerns" type="textarea">
+      <Label>Patient Concerns Addressed</Label>
+      <Placeholder>What worries did patient express? How were these addressed?</Placeholder>
+    </Field>
+
+    <Field id="treatment_choice_rationale" type="textarea" required="true">
+      <Label>Rationale for Treatment Choice</Label>
+      <Placeholder>Why this treatment plan? How does it align with severity, patient preferences, and evidence base?</Placeholder>
+    </Field>
+  </Section>
+
+  <!-- TREATMENT PLAN: PSYCHOLOGICAL THERAPY -->
+  <Section id="therapy_plan">
+    <Title>Psychological Therapy</Title>
+    <Description>If therapy selected as part of treatment plan</Description>
+
+    <Field id="therapy_recommended" type="radio" required="true">
+      <Label>Psychological Therapy Recommended?</Label>
+      <Options>
+        <Option value="yes">Yes</Option>
+        <Option value="no">No</Option>
+      </Options>
+    </Field>
+
+    <ConditionalSection show_if="therapy_recommended='yes'">
+      <Field id="therapy_intensity" type="select" required="true">
+        <Label>Therapy Intensity</Label>
+        <Options>
+          <Option value="low_intensity">Low-intensity (guided self-help, online CBT, psychoeducation groups)</Option>
+          <Option value="high_intensity">High-intensity (individual CBT, IPT, Behavioral Activation)</Option>
+        </Options>
+        <Guidance>
+          - Subthreshold/Mild: Low-intensity
+          - Moderate: Patient choice (low or high)
+          - Severe: High-intensity
+        </Guidance>
+      </Field>
+
+      <Field id="therapy_type" type="select" required="true">
+        <Label>Therapy Type</Label>
+        <Options>
+          <Option value="cbt">Cognitive Behavioral Therapy (CBT)</Option>
+          <Option value="behavioral_activation">Behavioral Activation</Option>
+          <Option value="ipt">Interpersonal Therapy (IPT)</Option>
+          <Option value="guided_self_help">Guided self-help</Option>
+          <Option value="computerized_cbt">Computerized CBT (e.g., Beating the Blues)</Option>
+          <Option value="mbct">Mindfulness-Based Cognitive Therapy (MBCT) - relapse prevention</Option>
+        </Options>
+      </Field>
+
+      <Field id="therapy_referral_status" type="select" required="true">
+        <Label>Referral Status</Label>
+        <Options>
+          <Option value="referred_iapt">Referred to IAPT (self-referral link provided)</Option>
+          <Option value="referred_cmht">Referred to CMHT</Option>
+          <Option value="referred_private">Patient pursuing private therapy</Option>
+          <Option value="waiting_list">On waiting list</Option>
+          <Option value="already_receiving">Already receiving therapy</Option>
+        </Options>
+      </Field>
+
+      <Field id="therapy_referral_date" type="date">
+        <Label>Referral Date</Label>
+      </Field>
+
+      <Field id="iapt_self_referral_link" type="text">
+        <Label>IAPT Self-Referral Link Provided</Label>
+        <DefaultValue>www.nhs.uk/service-search/mental-health/find-a-psychological-therapies-service</DefaultValue>
+      </Field>
+
+      <Field id="therapy_expected_start" type="date">
+        <Label>Expected Therapy Start Date (if known)</Label>
+      </Field>
+    </ConditionalSection>
+  </Section>
+
+  <!-- TREATMENT PLAN: MEDICATION -->
+  <Section id="medication_plan">
+    <Title>Antidepressant Medication</Title>
+    <Description>If medication selected as part of treatment plan</Description>
+
+    <Field id="medication_recommended" type="radio" required="true">
+      <Label>Antidepressant Medication Recommended?</Label>
+      <Options>
+        <Option value="yes">Yes</Option>
+        <Option value="no">No</Option>
+      </Options>
+      <Alert condition="value='yes' AND severity='mild'">Check: For mild depression, NICE recommends lifestyle and low-intensity therapy first. Is there a specific reason for medication?</Alert>
+    </Field>
+
+    <ConditionalSection show_if="medication_recommended='yes'">
+      <Field id="medication_name" type="select" required="true">
+        <Label>Antidepressant Chosen</Label>
+        <Options>
+          <Option value="sertraline">Sertraline (first-line SSRI)</Option>
+          <Option value="fluoxetine">Fluoxetine (SSRI, long half-life)</Option>
+          <Option value="citalopram">Citalopram (SSRI)</Option>
+          <Option value="escitalopram">Escitalopram (SSRI)</Option>
+          <Option value="paroxetine">Paroxetine (SSRI, avoid if possible - high withdrawal)</Option>
+          <Option value="mirtazapine">Mirtazapine (sedating, weight gain common)</Option>
+          <Option value="venlafaxine">Venlafaxine (SNRI, second-line)</Option>
+          <Option value="duloxetine">Duloxetine (SNRI)</Option>
+          <Option value="bupropion">Bupropion (NDRI, lower sexual side effects)</Option>
+          <Option value="other">Other (specify in notes)</Option>
+        </Options>
+      </Field>
+
+      <Field id="medication_dose_start" type="text" required="true">
+        <Label>Starting Dose</Label>
+        <Placeholder>e.g., "50mg daily"</Placeholder>
+      </Field>
+
+      <Field id="medication_dose_target" type="text" required="true">
+        <Label>Target/Usual Therapeutic Dose</Label>
+        <Placeholder>e.g., "100mg daily"</Placeholder>
+      </Field>
+
+      <Field id="medication_timing" type="select" required="true">
+        <Label>Timing of Dose</Label>
+        <Options>
+          <Option value="morning">Morning (if activating, e.g., fluoxetine, sertraline)</Option>
+          <Option value="evening">Evening (if sedating, e.g., mirtazapine)</Option>
+          <Option value="anytime">Any time (patient preference)</Option>
+        </Options>
+      </Field>
+
+      <Field id="medication_duration_planned" type="text" required="true">
+        <Label>Planned Duration</Label>
+        <DefaultValue>Continue for 6-12 months after remission</DefaultValue>
+      </Field>
+
+      <Field id="side_effects_discussed" type="checkbox" required="true">
+        <Label>Side Effects Discussed with Patient</Label>
+        <Options>
+          <Option value="nausea">Nausea (first 1-2 weeks, usually improves)</Option>
+          <Option value="sexual">Sexual dysfunction (difficulty orgasm, reduced libido - may persist)</Option>
+          <Option value="weight_gain">Weight gain (varies by medication)</Option>
+          <Option value="insomnia">Sleep changes (insomnia or sedation)</Option>
+          <Option value="emotional_blunting">Emotional blunting/numbness</Option>
+          <Option value="vivid_dreams">Vivid dreams</Option>
+          <Option value="initial_anxiety">Increased anxiety/agitation (first 1-2 weeks)</Option>
+          <Option value="withdrawal">Withdrawal symptoms if stopped abruptly</Option>
+        </Options>
+        <Alert condition="NOT checked">Ensure patient informed consent - discuss common side effects</Alert>
+      </Field>
+
+      <Field id="medication_patient_info_given" type="checkbox" required="true">
+        <Label>Patient Information Provided</Label>
+        <Options>
+          <Option value="pil">Patient Information Leaflet (PIL) provided</Option>
+          <Option value="equilibrium_guide">EQUILIBRIUM "Antidepressant Side Effects Comparison" guide provided</Option>
+          <Option value="timeline">Timeline explained (4-6 weeks to work, may feel worse first 1-2 weeks)</Option>
+          <Option value="what_to_expect">What to expect in first few weeks explained</Option>
+        </Options>
+      </Field>
+
+      <Field id="medication_safety_checks" type="checkbox" required="true">
+        <Label>Safety Checks Completed</Label>
+        <Options>
+          <Option value="contraindications">No contraindications (check BNF)</Option>
+          <Option value="interactions">Drug interaction check completed</Option>
+          <Option value="qrs_if_citalopram">If citalopram/escitalopram: QTc prolongation risk assessed</Option>
+          <Option value="bleeding_risk">Bleeding risk assessed (NSAID/aspirin use, history of GI bleed)</Option>
+          <Option value="hyponatremia_risk">Hyponatremia risk (elderly, diuretics)</Option>
+        </Options>
+      </Field>
+    </ConditionalSection>
+  </Section>
+
+  <!-- TREATMENT PLAN: LIFESTYLE INTERVENTIONS -->
+  <Section id="lifestyle_plan">
+    <Title>Lifestyle Interventions</Title>
+    <Description>Evidence-based lifestyle treatments (exercise, diet, sleep, social connection)</Description>
+
+    <Field id="lifestyle_interventions_included" type="radio" required="true">
+      <Label>Lifestyle Interventions Included in Treatment Plan?</Label>
+      <Options>
+        <Option value="yes">Yes</Option>
+        <Option value="no">No</Option>
+      </Options>
+      <Alert condition="value='no'">Consider: Lifestyle interventions are evidence-based treatments (exercise as effective as medication, Mediterranean diet 32% remission rate)</Alert>
+    </Field>
+
+    <ConditionalSection show_if="lifestyle_interventions_included='yes'">
+
+      <!-- Exercise Prescription -->
+      <SubSection id="exercise_prescription">
+        <Title>Exercise Prescription</Title>
+
+        <Field id="exercise_prescribed" type="radio" required="true">
+          <Label>Exercise Prescribed?</Label>
+          <Options>
+            <Option value="yes">Yes</Option>
+            <Option value="no">No</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="exercise_prescribed='yes'">
+          <Field id="exercise_type" type="text" required="true">
+            <Label>Type of Exercise</Label>
+            <DefaultValue>Brisk walking (or patient's preferred aerobic activity)</DefaultValue>
+            <Guidance>Any aerobic activity: walking, jogging, cycling, swimming, dancing, sports</Guidance>
+          </Field>
+
+          <Field id="exercise_frequency" type="text" required="true">
+            <Label>Frequency</Label>
+            <DefaultValue>5 days per week</DefaultValue>
+          </Field>
+
+          <Field id="exercise_duration" type="text" required="true">
+            <Label>Duration per Session</Label>
+            <DefaultValue>30 minutes</DefaultValue>
+          </Field>
+
+          <Field id="exercise_intensity" type="select" required="true">
+            <Label>Intensity</Label>
+            <Options>
+              <Option value="moderate">Moderate (can talk but not sing)</Option>
+              <Option value="vigorous">Vigorous (can only say a few words before needing breath)</Option>
+            </Options>
+            <DefaultValue>moderate</DefaultValue>
+          </Field>
+
+          <Field id="exercise_total_weekly" type="number" required="true">
+            <Label>Total Weekly Minutes</Label>
+            <DefaultValue>150</DefaultValue>
+            <Guidance>Evidence base: 150 min/week moderate OR 75 min/week vigorous</Guidance>
+          </Field>
+
+          <Field id="exercise_start_plan" type="textarea">
+            <Label>Gradual Start Plan (if currently inactive)</Label>
+            <Placeholder>e.g., "Week 1-2: 10 min, 3 days/week. Week 3-4: 15 min, 4 days/week. Week 5+: 30 min, 5 days/week."</Placeholder>
+          </Field>
+
+          <Field id="exercise_resources_provided" type="checkbox">
+            <Label>Resources Provided</Label>
+            <Options>
+              <Option value="equilibrium_guide">EQUILIBRIUM "Exercise for Mental Health" patient guide</Option>
+              <Option value="exercise_on_prescription">Exercise on Prescription referral (if available locally)</Option>
+              <Option value="couch_to_5k">NHS Couch to 5K app recommended</Option>
+              <Option value="parkrun">parkrun information provided (free weekly 5K)</Option>
+              <Option value="local_resources">Local exercise groups/facilities information</Option>
+            </Options>
+          </Field>
+        </ConditionalSection>
+      </SubSection>
+
+      <!-- Diet and Nutrition -->
+      <SubSection id="diet_prescription">
+        <Title>Diet and Nutrition</Title>
+
+        <Field id="diet_intervention" type="radio" required="true">
+          <Label>Dietary Intervention Recommended?</Label>
+          <Options>
+            <Option value="yes">Yes</Option>
+            <Option value="no">No</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="diet_intervention='yes'">
+          <Field id="diet_type" type="select" required="true">
+            <Label>Dietary Approach</Label>
+            <Options>
+              <Option value="mediterranean">Mediterranean diet (evidence-based for depression)</Option>
+              <Option value="general_healthy">General healthy eating advice</Option>
+              <Option value="specific">Specific nutritional targets (omega-3, vitamin D, etc.)</Option>
+            </Options>
+          </Field>
+
+          <Field id="diet_key_recommendations" type="checkbox">
+            <Label>Key Recommendations Discussed</Label>
+            <Options>
+              <Option value="regular_meals">Eat regular meals (3 meals/day - stabilizes blood sugar and mood)</Option>
+              <Option value="fish">Increase oily fish (salmon, mackerel, sardines 2×/week for omega-3)</Option>
+              <Option value="vegetables">Increase vegetables and fruits (5+ servings/day)</Option>
+              <Option value="whole_grains">Choose whole grains over refined (brown rice, whole wheat)</Option>
+              <Option value="olive_oil">Cook with olive oil instead of butter</Option>
+              <Option value="legumes">Include legumes (beans, lentils, chickpeas 3-4×/week)</Option>
+              <Option value="reduce_processed">Reduce processed foods, sugar, and refined carbs</Option>
+              <Option value="hydration">Stay well-hydrated (6-8 glasses water/day)</Option>
+            </Options>
+          </Field>
+
+          <Field id="diet_resources_provided" type="checkbox">
+            <Label>Resources Provided</Label>
+            <Options>
+              <Option value="equilibrium_guide">EQUILIBRIUM "Mediterranean Diet for Mental Health" patient guide</Option>
+              <Option value="meal_ideas">Meal ideas and recipes</Option>
+              <Option value="dietitian_referral">Dietitian referral (if complex nutritional needs)</Option>
+            </Options>
+          </Field>
+        </ConditionalSection>
+      </SubSection>
+
+      <!-- Sleep Intervention -->
+      <SubSection id="sleep_intervention">
+        <Title>Sleep Intervention</Title>
+
+        <Field id="sleep_intervention_needed" type="radio" required="true">
+          <Label>Sleep Intervention Needed?</Label>
+          <Options>
+            <Option value="yes">Yes (sleep problems present)</Option>
+            <Option value="no">No (sleep adequate)</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="sleep_intervention_needed='yes'">
+          <Field id="sleep_intervention_type" type="select" required="true">
+            <Label>Sleep Intervention Type</Label>
+            <Options>
+              <Option value="sleep_hygiene">Sleep hygiene education</Option>
+              <Option value="cbti_digital">Digital CBT-I (e.g., Sleepio)</Option>
+              <Option value="cbti_face_to_face">Face-to-face CBT-I referral</Option>
+            </Options>
+            <Guidance>CBT-I more effective than sleep hygiene alone; digital CBT-I effective and accessible</Guidance>
+          </Field>
+
+          <Field id="sleep_hygiene_key_points" type="checkbox">
+            <Label>Sleep Hygiene Key Points Discussed</Label>
+            <Options>
+              <Option value="consistent_schedule">Consistent wake time (even weekends, even if slept poorly)</Option>
+              <Option value="bed_for_sleep">Bed for sleep only (not reading, TV, phone)</Option>
+              <Option value="get_out_bed">Get out of bed if not sleeping (15-20 min rule)</Option>
+              <Option value="no_caffeine">No caffeine after 2pm</Option>
+              <Option value="no_alcohol">Avoid alcohol before bed (disrupts sleep quality)</Option>
+              <Option value="wind_down">Wind-down routine (1 hour before bed)</Option>
+              <Option value="no_screens">No screens 1 hour before bed</Option>
+              <Option value="bedroom_environment">Optimize bedroom (cool 16-18°C, dark, quiet)</Option>
+              <Option value="morning_light">Bright light exposure in morning</Option>
+            </Options>
+          </Field>
+
+          <Field id="sleep_resources_provided" type="checkbox">
+            <Label>Resources Provided</Label>
+            <Options>
+              <Option value="equilibrium_guide">EQUILIBRIUM "Sleep Hygiene Guide" patient guide</Option>
+              <Option value="sleepio">Sleepio digital CBT-I recommended</Option>
+              <Option value="sleep_diary">Sleep diary template provided</Option>
+            </Options>
+          </Field>
+        </ConditionalSection>
+      </SubSection>
+
+      <!-- Social Connection -->
+      <SubSection id="social_intervention">
+        <Title>Social Connection and Activity</Title>
+
+        <Field id="social_intervention" type="radio" required="true">
+          <Label>Social Intervention Included?</Label>
+          <Options>
+            <Option value="yes">Yes</Option>
+            <Option value="no">No</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="social_intervention='yes'">
+          <Field id="social_strategies" type="checkbox">
+            <Label>Strategies Discussed</Label>
+            <Options>
+              <Option value="reconnect">Reconnect with friends/family (specific plan made)</Option>
+              <Option value="join_groups">Join community groups/activities (specific suggestions given)</Option>
+              <Option value="social_prescribing">Social prescribing link worker referral</Option>
+              <Option value="volunteering">Volunteering opportunities explored</Option>
+              <Option value="exercise_social">Social exercise (walking groups, classes, parkrun)</Option>
+            </Options>
+          </Field>
+
+          <Field id="social_prescribing_referral" type="radio">
+            <Label>Social Prescribing Referral Made?</Label>
+            <Options>
+              <Option value="yes">Yes - referred to link worker</Option>
+              <Option value="no">No</Option>
+            </Options>
+          </Field>
+        </ConditionalSection>
+      </SubSection>
+
+    </ConditionalSection>
+  </Section>
+
+  <!-- MONITORING AND FOLLOW-UP -->
+  <Section id="monitoring_plan">
+    <Title>Monitoring and Follow-Up Schedule</Title>
+    <Description>Structured monitoring plan with PHQ-9 tracking</Description>
+
+    <Field id="first_followup_date" type="date" required="true">
+      <Label>First Follow-Up Appointment Date</Label>
+      <Guidance>
+        - If medication started: 2 weeks (check side effects, suicide risk)
+        - If lifestyle only: 4-6 weeks
+        - If high suicide risk: 1 week or sooner
+      </Guidance>
+    </Field>
+
+    <Field id="first_followup_focus" type="checkbox" required="true">
+      <Label>First Follow-Up Will Assess</Label>
+      <Options>
+        <Option value="medication_side_effects">Medication side effects and tolerability</Option>
+        <Option value="suicide_risk">Suicide risk reassessment</Option>
+        <Option value="phq9">PHQ-9 score (check for response)</Option>
+        <Option value="adherence">Treatment adherence (medication, exercise, therapy attendance)</Option>
+        <Option value="lifestyle_progress">Lifestyle intervention progress</Option>
+        <Option value="barriers">Barriers to treatment</Option>
+      </Options>
+    </Field>
+
+    <Field id="phq9_monitoring_schedule" type="select" required="true">
+      <Label>PHQ-9 Monitoring Schedule</Label>
+      <Options>
+        <Option value="2_weeks">Every 2 weeks (if medication, or high risk)</Option>
+        <Option value="4_weeks">Every 4 weeks (if therapy or lifestyle only)</Option>
+        <Option value="8_weeks">Every 8 weeks (if stable, in continuation phase)</Option>
+      </Options>
+      <Guidance>Response defined as ≥50% reduction in PHQ-9. Remission defined as PHQ-9 &lt;5.</Guidance>
+    </Field>
+
+    <Field id="response_timeline" type="text" required="true">
+      <Label>Expected Timeline for Response</Label>
+      <DefaultValue>6-8 weeks</DefaultValue>
+      <Guidance>All treatments (therapy, medication, exercise) take 4-8 weeks minimum</Guidance>
+    </Field>
+
+    <Field id="if_no_response_by" type="date" required="true">
+      <Label>If No Response By (Date to Review Treatment)</Label>
+      <Guidance>Set review date 8-12 weeks from treatment start. If PHQ-9 not improved ≥25%, consider treatment adjustment.</Guidance>
+    </Field>
+
+    <Field id="treatment_adjustment_plan" type="textarea">
+      <Label>Plan if No Response at 8-12 Weeks</Label>
+      <Placeholder>e.g., "If PHQ-9 not improved by at least 25% at 12 weeks: (1) Check adherence, (2) Increase medication dose OR (3) Add therapy if medication alone OR (4) Add medication if therapy alone OR (5) Refer to mental health services"</Placeholder>
+    </Field>
+
+    <Field id="continuation_phase_plan" type="textarea">
+      <Label>Continuation Phase Plan (After Remission)</Label>
+      <DefaultValue>Continue treatment at same dose/intensity for 6-12 months after remission to prevent relapse. Maintain lifestyle changes. Monitor PHQ-9 every 8 weeks.</DefaultValue>
+    </Field>
+  </Section>
+
+  <!-- SAFETY PLANNING -->
+  <Section id="safety_plan">
+    <Title>Safety Planning</Title>
+    <Description>Crisis plan and when to seek help</Description>
+
+    <Field id="safety_plan_needed" type="radio" required="true">
+      <Label>Safety Plan Needed?</Label>
+      <Options>
+        <Option value="yes">Yes (any suicide risk)</Option>
+        <Option value="no">No (PHQ-9 Q9 = 0, no risk)</Option>
+      </Options>
+    </Field>
+
+    <ConditionalSection show_if="safety_plan_needed='yes'">
+      <Field id="warning_signs" type="textarea" required="true">
+        <Label>Warning Signs to Watch For</Label>
+        <Placeholder>Personal warning signs that crisis is developing, e.g., "Thoughts of self-harm increase, stop getting out of bed, stop answering phone"</Placeholder>
+      </Field>
+
+      <Field id="coping_strategies" type="textarea" required="true">
+        <Label>Coping Strategies When Feeling Worse</Label>
+        <Placeholder>Things patient can do to feel better, e.g., "Call friend, go for walk, listen to music, use breathing exercises"</Placeholder>
+      </Field>
+
+      <Field id="safety_contacts" type="textarea" required="true">
+        <Label>Safety Contacts (People to Call)</Label>
+        <Placeholder>Trusted people patient can contact, with phone numbers</Placeholder>
+      </Field>
+
+      <Field id="crisis_numbers_provided" type="checkbox" required="true">
+        <Label>Crisis Contact Numbers Provided</Label>
+        <Options>
+          <Option value="samaritans">Samaritans: 116 123 (24/7, free)</Option>
+          <Option value="shout">Crisis Text Line: SHOUT to 85258</Option>
+          <Option value="nhs_crisis">Local NHS mental health crisis line</Option>
+          <Option value="gp_emergency">GP surgery emergency number</Option>
+          <Option value="999">999 or A&amp;E if immediate danger</Option>
+        </Options>
+      </Field>
+
+      <Field id="when_to_seek_urgent_help" type="checkbox" required="true">
+        <Label>When to Seek Urgent Help - Explained to Patient</Label>
+        <Options>
+          <Option value="suicide_plan">Thoughts of suicide with a plan</Option>
+          <Option value="cant_stay_safe">Feeling unable to keep self safe</Option>
+          <Option value="self_harm">Acts of self-harm</Option>
+          <Option value="severe_worsening">Severe worsening of symptoms</Option>
+        </Options>
+      </Field>
+    </ConditionalSection>
+  </Section>
+
+  <!-- PATIENT EDUCATION AND RESOURCES -->
+  <Section id="patient_resources">
+    <Title>Patient Education and Resources Provided</Title>
+
+    <Field id="resources_provided" type="checkbox" required="true">
+      <Label>EQUILIBRIUM Patient Guides Provided</Label>
+      <Options>
+        <Option value="understanding_depression">Understanding Depression guide</Option>
+        <Option value="treatment_options">Treatment Options Explained</Option>
+        <Option value="exercise">Exercise for Mental Health</Option>
+        <Option value="diet">Mediterranean Diet for Mental Health</Option>
+        <Option value="sleep">Sleep Hygiene Guide</Option>
+        <Option value="decision_aid">Depression Treatment Decision Aid</Option>
+      </Options>
+    </Field>
+
+    <Field id="additional_resources" type="checkbox">
+      <Label>Additional Resources/Referrals</Label>
+      <Options>
+        <Option value="iapt_referral">IAPT self-referral information</Option>
+        <Option value="online_cbt">Online CBT resources (e.g., Beating the Blues)</Option>
+        <Option value="apps">Mental health apps recommended</Option>
+        <Option value="support_groups">Support groups (local or online)</Option>
+        <Option value="carers_support">Information for family/carers</Option>
+        <Option value="work_support">Occupational health/fit note discussed</Option>
+      </Options>
+    </Field>
+  </Section>
+
+  <!-- CLINICIAN NOTES -->
+  <Section id="clinician_notes">
+    <Title>Additional Clinician Notes</Title>
+
+    <Field id="additional_notes" type="textarea">
+      <Label>Additional Notes</Label>
+      <Placeholder>Any additional relevant information not captured above</Placeholder>
+    </Field>
+
+    <Field id="treatment_plan_discussed_with" type="text">
+      <Label>Treatment Plan Discussed With</Label>
+      <Placeholder>e.g., "Patient", "Patient and partner", "Patient via phone"</Placeholder>
+    </Field>
+
+    <Field id="patient_agreement" type="radio" required="true">
+      <Label>Patient Agreement to Treatment Plan</Label>
+      <Options>
+        <Option value="agrees">Patient agrees and consents to treatment plan</Option>
+        <Option value="partially_agrees">Patient partially agrees (see notes)</Option>
+        <Option value="declines">Patient declines recommended treatment (see notes)</Option>
+      </Options>
+    </Field>
+  </Section>
+
+  <!-- METADATA AND AUDIT -->
+  <Section id="metadata">
+    <Title>Metadata</Title>
+
+    <Field id="clinician_name" type="text" required="true">
+      <Label>Clinician Name</Label>
+    </Field>
+
+    <Field id="clinician_role" type="select" required="true">
+      <Label>Clinician Role</Label>
+      <Options>
+        <Option value="gp">GP</Option>
+        <Option value="gp_trainee">GP Trainee</Option>
+        <Option value="nurse_practitioner">Nurse Practitioner</Option>
+        <Option value="physician_associate">Physician Associate</Option>
+      </Options>
+    </Field>
+
+    <Field id="treatment_plan_date" type="date" required="true">
+      <Label>Treatment Plan Date</Label>
+      <DefaultValue>Today's date</DefaultValue>
+    </Field>
+
+    <Field id="treatment_start_date" type="date" required="true">
+      <Label>Treatment Start Date</Label>
+      <Guidance>Date treatment begins (may be same as plan date or future date for therapy start)</Guidance>
+    </Field>
+  </Section>
+
+  <!-- CLINICAL DECISION SUPPORT RULES -->
+  <ClinicalDecisionSupport>
+    <Rule id="mild_depression_medication">
+      <Condition>severity='mild' AND medication_recommended='yes' AND NOT (therapy_recommended='yes' OR lifestyle_interventions_included='yes')</Condition>
+      <Alert level="warning">NICE guideline: For mild depression, consider lifestyle interventions and low-intensity therapy before medication. Is there a specific reason for medication first-line?</Alert>
+    </Rule>
+
+    <Rule id="severe_depression_monotherapy">
+      <Condition>severity IN ('moderately_severe', 'severe') AND NOT (medication_recommended='yes' AND therapy_recommended='yes')</Condition>
+      <Alert level="info">For moderately severe/severe depression, combination therapy (medication + therapy + lifestyle) has better outcomes than monotherapy.</Alert>
+    </Rule>
+
+    <Rule id="suicide_risk_urgent_followup">
+      <Condition>suicide_risk_level IN ('moderate', 'high') AND first_followup_date &gt; 7 days from today</Condition>
+      <Alert level="warning">Suicide risk present: First follow-up should be within 1 week (sooner if high risk).</Alert>
+    </Rule>
+
+    <Rule id="medication_early_followup">
+      <Condition>medication_recommended='yes' AND first_followup_date &gt; 14 days from today</Condition>
+      <Alert level="info">When starting antidepressant, recommend 2-week follow-up to check side effects and suicide risk.</Alert>
+    </Rule>
+
+    <Rule id="no_lifestyle">
+      <Condition>lifestyle_interventions_included='no'</Condition>
+      <Alert level="info">Consider: Lifestyle interventions (exercise, diet, sleep) are evidence-based treatments with no side effects. Can be added to any treatment plan.</Alert>
+    </Rule>
+
+    <Rule id="no_shared_decision_making">
+      <Condition>options_discussed IS EMPTY OR patient_preferences IS EMPTY</Condition>
+      <Alert level="warning">Shared decision-making: Ensure all treatment options discussed and patient preferences documented.</Alert>
+    </Rule>
+  </ClinicalDecisionSupport>
+
+  <!-- AUDIT AND QUALITY METRICS -->
+  <AuditFields>
+    <Metric id="guideline_concordance">
+      <Label>NICE Guideline Concordance</Label>
+      <Calculation>Check treatment plan aligns with NICE CG90 recommendations based on severity</Calculation>
+    </Metric>
+
+    <Metric id="shared_decision_making_documented">
+      <Label>Shared Decision-Making Documented</Label>
+      <Calculation>Check if options discussed AND patient preferences recorded</Calculation>
+    </Metric>
+
+    <Metric id="lifestyle_included">
+      <Label>Lifestyle Interventions Included</Label>
+      <Calculation>Percentage of treatment plans including lifestyle interventions</Calculation>
+    </Metric>
+
+    <Metric id="followup_scheduled">
+      <Label>Structured Follow-Up Scheduled</Label>
+      <Calculation>Check if first follow-up date recorded</Calculation>
+    </Metric>
+  </AuditFields>
+
+  <!-- INTEGRATION GUIDANCE -->
+  <IntegrationGuidance>
+    <System name="EMIS">
+      <Instructions>
+        1. Create new consultation template
+        2. Map fields to EMIS data entry forms
+        3. Use Read codes for structured data (e.g., 1B1..00 for treatment plan)
+        4. Set up alerts using EMIS reminder system
+        5. Link to PHQ-9 template for auto-population
+      </Instructions>
+    </System>
+
+    <System name="SystmOne">
+      <Instructions>
+        1. Create template in Clinical Template Manager
+        2. Map to SystmOne clinical terms
+        3. Use SystmOne workflow for alerts
+        4. Link to existing PHQ-9 template
+        5. Set up follow-up tasks automatically
+      </Instructions>
+    </System>
+
+    <System name="Vision">
+      <Instructions>
+        1. Create custom form in Vision
+        2. Map to Vision clinical codes
+        3. Set up Vision alerts for decision support
+        4. Integrate with Vision diary for follow-up booking
+      </Instructions>
+    </System>
+  </IntegrationGuidance>
+
+  <UsageNotes>
+    <Note>This template documents a comprehensive, evidence-based treatment plan following EQUILIBRIUM principles: holistic assessment, shared decision-making, lifestyle interventions as treatment (not just "advice"), and structured monitoring.</Note>
+    <Note>Complete immediately following biopsychosocial assessment.</Note>
+    <Note>Treatment plan should be shared with patient (printed or email summary).</Note>
+    <Note>Link to monitoring schedule template for ongoing tracking.</Note>
+    <Note>Update treatment plan if treatment changes (dose adjustment, adding therapy, etc.).</Note>
+  </UsageNotes>
+
+</EHRTemplate>

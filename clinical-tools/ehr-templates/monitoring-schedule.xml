@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EHRTemplate>
+  <TemplateName>EQUILIBRIUM Depression Monitoring Schedule</TemplateName>
+  <Version>2.0</Version>
+  <LastUpdated>2025-10-23</LastUpdated>
+  <Description>Structured monitoring template for tracking depression treatment response, adherence, side effects, and treatment adjustments. Links to treatment plan and enables longitudinal outcome tracking.</Description>
+
+  <Metadata>
+    <TemplateID>EQUIL-MONITOR-001</TemplateID>
+    <Category>Mental Health - Depression Monitoring</Category>
+    <ClinicalArea>Primary Care</ClinicalArea>
+    <ReadCode>38D..00</ReadCode>
+    <SNOMEDCode>183478009</SNOMEDCode>
+    <TargetConditions>
+      <Condition>Depression (F32, F33)</Condition>
+      <Condition>Treatment monitoring</Condition>
+    </TargetConditions>
+    <UsageFrequency>Every 2-8 weeks depending on treatment phase</UsageFrequency>
+  </Metadata>
+
+  <!-- VISIT INFORMATION -->
+  <Section id="visit_info">
+    <Title>Visit Information</Title>
+
+    <Field id="monitoring_visit_date" type="date" required="true">
+      <Label>Monitoring Visit Date</Label>
+      <DefaultValue>Today</DefaultValue>
+    </Field>
+
+    <Field id="visit_number" type="number" required="true">
+      <Label>Visit Number Since Treatment Start</Label>
+      <Range min="1" max="50"/>
+      <Guidance>Track sequential visits: 1 = baseline/treatment start, 2 = first follow-up, etc.</Guidance>
+    </Field>
+
+    <Field id="weeks_since_treatment_start" type="number" required="true">
+      <Label>Weeks Since Treatment Started</Label>
+      <AutoCalculate>Calculate from treatment_start_date in treatment plan</AutoCalculate>
+    </Field>
+
+    <Field id="visit_type" type="select" required="true">
+      <Label>Visit Type</Label>
+      <Options>
+        <Option value="baseline">Baseline (treatment start)</Option>
+        <Option value="early_followup">Early follow-up (weeks 1-4)</Option>
+        <Option value="response_assessment">Response assessment (weeks 6-12)</Option>
+        <Option value="continuation">Continuation phase (after remission)</Option>
+        <Option value="relapse_check">Relapse monitoring</Option>
+        <Option value="treatment_adjustment">Treatment adjustment</Option>
+      </Options>
+    </Field>
+  </Section>
+
+  <!-- OUTCOME MEASUREMENT: PHQ-9 -->
+  <Section id="phq9_tracking">
+    <Title>Depression Symptom Monitoring (PHQ-9)</Title>
+    <Description>Track PHQ-9 score over time to assess treatment response</Description>
+
+    <Field id="phq9_current_score" type="number" required="true">
+      <Label>Current PHQ-9 Score</Label>
+      <Range min="0" max="27"/>
+      <Link>Link to PHQ-9 assessment tool</Link>
+    </Field>
+
+    <Field id="phq9_baseline_score" type="number" required="true">
+      <Label>Baseline PHQ-9 Score (at treatment start)</Label>
+      <Range min="0" max="27"/>
+      <AutoPopulate>Pull from initial assessment</AutoPopulate>
+    </Field>
+
+    <Field id="phq9_previous_score" type="number">
+      <Label>Previous PHQ-9 Score</Label>
+      <AutoPopulate>Pull from last monitoring visit</AutoPopulate>
+    </Field>
+
+    <Field id="phq9_change_from_baseline" type="number">
+      <Label>Change from Baseline</Label>
+      <AutoCalculate>phq9_current_score - phq9_baseline_score</AutoCalculate>
+      <Alert condition="value &gt; 0">Score INCREASED from baseline - treatment not working, worsening</Alert>
+      <Alert condition="value = 0 AND weeks_since_treatment_start &gt; 6">No change after 6+ weeks - treatment not effective</Alert>
+    </Field>
+
+    <Field id="phq9_percent_change" type="number">
+      <Label>Percent Change from Baseline</Label>
+      <AutoCalculate>((phq9_baseline_score - phq9_current_score) / phq9_baseline_score) × 100</AutoCalculate>
+      <Alert condition="value &lt; 25 AND weeks_since_treatment_start &gt; 8">Less than 25% improvement after 8 weeks - consider treatment adjustment</Alert>
+    </Field>
+
+    <Field id="treatment_response_status" type="select" required="true">
+      <Label>Treatment Response Status</Label>
+      <Options>
+        <Option value="remission">Remission (PHQ-9 &lt; 5)</Option>
+        <Option value="response">Response (≥50% reduction from baseline)</Option>
+        <Option value="partial_response">Partial response (25-49% reduction)</Option>
+        <Option value="minimal_response">Minimal response (&lt;25% reduction)</Option>
+        <Option value="no_response">No response (no change or worse)</Option>
+        <Option value="too_early">Too early to assess (less than 4 weeks)</Option>
+      </Options>
+      <AutoPopulate>Based on PHQ-9 change calculations</AutoPopulate>
+    </Field>
+
+    <Field id="phq9_severity_current" type="select" required="true">
+      <Label>Current Depression Severity</Label>
+      <Options>
+        <Option value="minimal" range="0-4">Minimal/None (0-4)</Option>
+        <Option value="mild" range="5-9">Mild (5-9)</Option>
+        <Option value="moderate" range="10-14">Moderate (10-14)</Option>
+        <Option value="moderately_severe" range="15-19">Moderately Severe (15-19)</Option>
+        <Option value="severe" range="20-27">Severe (20-27)</Option>
+      </Options>
+      <AutoPopulate>Based on current PHQ-9 score</AutoPopulate>
+    </Field>
+
+    <Field id="phq9_q9_suicide_risk" type="number" required="true">
+      <Label>PHQ-9 Question 9 (Suicide Risk)</Label>
+      <Range min="0" max="3"/>
+      <Options>
+        <Option value="0">0 - Not at all</Option>
+        <Option value="1">1 - Several days</Option>
+        <Option value="2">2 - More than half the days</Option>
+        <Option value="3">3 - Nearly every day</Option>
+      </Options>
+      <Alert condition="value &gt; 0">Suicidal ideation present - assess risk, update safety plan</Alert>
+      <Alert condition="value &gt; previous_phq9_q9">Suicide risk INCREASED - urgent risk assessment needed</Alert>
+    </Field>
+  </Section>
+
+  <!-- FUNCTIONAL OUTCOME: WORK AND SOCIAL FUNCTIONING -->
+  <Section id="functional_outcomes">
+    <Title>Functional Outcomes</Title>
+    <Description>Track impact on daily functioning</Description>
+
+    <Field id="work_status" type="select" required="true">
+      <Label>Work/Study Status</Label>
+      <Options>
+        <Option value="working_full">Working/studying full time without difficulty</Option>
+        <Option value="working_reduced">Working/studying but with reduced performance</Option>
+        <Option value="working_struggling">Working/studying but struggling significantly</Option>
+        <Option value="off_sick">Off work/study sick</Option>
+        <Option value="not_applicable">Not applicable (retired, unemployed, homemaker)</Option>
+      </Options>
+    </Field>
+
+    <Field id="social_functioning" type="select" required="true">
+      <Label>Social Functioning</Label>
+      <Options>
+        <Option value="normal">Normal social activities maintained</Option>
+        <Option value="reduced">Reduced social contact but still some activity</Option>
+        <Option value="minimal">Minimal social contact, mostly isolated</Option>
+        <Option value="none">Complete social withdrawal</Option>
+      </Options>
+    </Field>
+
+    <Field id="self_care" type="select" required="true">
+      <Label>Self-Care</Label>
+      <Options>
+        <Option value="normal">Self-care maintained (hygiene, eating, household)</Option>
+        <Option value="reduced">Self-care reduced but adequate</Option>
+        <Option value="poor">Self-care poor, needs prompting</Option>
+        <Option value="very_poor">Self-care very poor, needs assistance</Option>
+      </Options>
+      <Alert condition="value IN ('poor', 'very_poor')">Poor self-care indicates severe depression - consider treatment intensification</Alert>
+    </Field>
+  </Section>
+
+  <!-- TREATMENT ADHERENCE MONITORING -->
+  <Section id="adherence_monitoring">
+    <Title>Treatment Adherence</Title>
+    <Description>Monitor adherence to all components of treatment plan</Description>
+
+    <ConditionalSection show_if="medication_in_treatment_plan='yes'">
+      <SubSection id="medication_adherence">
+        <Title>Medication Adherence</Title>
+
+        <Field id="medication_name_current" type="text" required="true">
+          <Label>Current Medication</Label>
+          <AutoPopulate>Pull from treatment plan</AutoPopulate>
+        </Field>
+
+        <Field id="medication_dose_current" type="text" required="true">
+          <Label>Current Dose</Label>
+          <AutoPopulate>Pull from treatment plan or last adjustment</AutoPopulate>
+        </Field>
+
+        <Field id="medication_adherence_rate" type="select" required="true">
+          <Label>Medication Adherence</Label>
+          <Options>
+            <Option value="perfect">Perfect (100% - never miss doses)</Option>
+            <Option value="good">Good (≥80% - miss occasional dose)</Option>
+            <Option value="fair">Fair (50-79% - miss doses regularly)</Option>
+            <Option value="poor">Poor (&lt;50% - frequently miss doses)</Option>
+            <Option value="stopped">Stopped taking medication</Option>
+          </Options>
+          <Alert condition="value IN ('fair', 'poor', 'stopped')">Poor adherence - explore barriers, problem-solve</Alert>
+        </Field>
+
+        <Field id="medication_adherence_barriers" type="checkbox">
+          <Label>Barriers to Medication Adherence (if not perfect)</Label>
+          <Options>
+            <Option value="side_effects">Side effects intolerable</Option>
+            <Option value="forget">Forgets to take</Option>
+            <Option value="not_working">Doesn't think it's working</Option>
+            <Option value="stigma">Stigma/embarrassment about medication</Option>
+            <Option value="cost">Cost (prescription charges)</Option>
+            <Option value="believes_better">Feels better, thinks doesn't need it</Option>
+            <Option value="access">Difficulty getting prescription/pharmacy access</Option>
+          </Options>
+        </Field>
+
+        <Field id="adherence_interventions" type="checkbox">
+          <Label>Interventions to Improve Adherence</Label>
+          <Options>
+            <Option value="education">Re-education about timeline (4-6 weeks to work)</Option>
+            <Option value="reminder">Reminder strategy discussed (phone alarm, pill box)</Option>
+            <Option value="side_effect_mgmt">Side effect management strategies</Option>
+            <Option value="dose_adjustment">Dose adjustment to reduce side effects</Option>
+            <Option value="switch_medication">Consider switching medication</Option>
+            <Option value="prescription_exemption">Prescription exemption certificate discussed</Option>
+          </Options>
+        </Field>
+      </SubSection>
+    </ConditionalSection>
+
+    <ConditionalSection show_if="therapy_in_treatment_plan='yes'">
+      <SubSection id="therapy_adherence">
+        <Title>Therapy Adherence</Title>
+
+        <Field id="therapy_status" type="select" required="true">
+          <Label>Therapy Status</Label>
+          <Options>
+            <Option value="not_started_waiting">Referred, on waiting list</Option>
+            <Option value="started">Started therapy</Option>
+            <Option value="ongoing">Therapy ongoing</Option>
+            <Option value="completed">Therapy completed</Option>
+            <Option value="dropped_out">Dropped out of therapy</Option>
+            <Option value="declined">Patient declined therapy</Option>
+          </Options>
+        </Field>
+
+        <ConditionalSection show_if="therapy_status IN ('started', 'ongoing', 'completed')">
+          <Field id="therapy_sessions_attended" type="number">
+            <Label>Number of Sessions Attended</Label>
+          </Field>
+
+          <Field id="therapy_sessions_planned" type="number">
+            <Label>Total Planned Sessions</Label>
+          </Field>
+
+          <Field id="therapy_attendance_rate" type="select">
+            <Label>Therapy Attendance</Label>
+            <Options>
+              <Option value="excellent">Excellent (attended all scheduled)</Option>
+              <Option value="good">Good (missed 1-2 sessions)</Option>
+              <Option value="fair">Fair (missed several sessions)</Option>
+              <Option value="poor">Poor (frequently misses)</Option>
+            </Options>
+          </Field>
+
+          <Field id="therapy_homework_completion" type="select">
+            <Label>Homework/Between-Session Tasks Completion</Label>
+            <Options>
+              <Option value="always">Always completes</Option>
+              <Option value="usually">Usually completes</Option>
+              <Option value="sometimes">Sometimes completes</Option>
+              <Option value="rarely">Rarely completes</Option>
+            </Options>
+            <Guidance>Homework completion predicts therapy outcome</Guidance>
+          </Field>
+        </ConditionalSection>
+
+        <ConditionalSection show_if="therapy_status='dropped_out'">
+          <Field id="therapy_dropout_reason" type="checkbox">
+            <Label>Reason for Dropping Out</Label>
+            <Options>
+              <Option value="not_helpful">Didn't find it helpful</Option>
+              <Option value="too_difficult">Too difficult/demanding</Option>
+              <Option value="poor_fit_therapist">Poor fit with therapist</Option>
+              <Option value="practical_barriers">Practical barriers (time, travel, childcare)</Option>
+              <Option value="improved">Felt better, didn't think needed more</Option>
+              <Option value="worsened">Got worse, couldn't continue</Option>
+            </Options>
+          </Field>
+        </ConditionalSection>
+      </SubSection>
+    </ConditionalSection>
+
+    <ConditionalSection show_if="exercise_in_treatment_plan='yes'">
+      <SubSection id="exercise_adherence">
+        <Title>Exercise Adherence</Title>
+
+        <Field id="exercise_minutes_per_week" type="number" required="true">
+          <Label>Exercise Minutes This Week</Label>
+          <Range min="0" max="1000"/>
+          <Guidance>Target: 150 min/week moderate aerobic activity</Guidance>
+        </Field>
+
+        <Field id="exercise_days_per_week" type="number" required="true">
+          <Label>Exercise Days This Week</Label>
+          <Range min="0" max="7"/>
+          <Guidance>Target: 5 days/week</Guidance>
+        </Field>
+
+        <Field id="exercise_adherence_level" type="select" required="true">
+          <Label>Exercise Adherence to Target (150 min/week)</Label>
+          <Options>
+            <Option value="exceeds">Exceeds target (&gt;150 min/week)</Option>
+            <Option value="meets">Meets target (150 min/week)</Option>
+            <Option value="partial">Partial (75-149 min/week)</Option>
+            <Option value="minimal">Minimal (1-74 min/week)</Option>
+            <Option value="none">None (0 min)</Option>
+          </Options>
+          <AutoPopulate>Based on exercise_minutes_per_week</AutoPopulate>
+          <Alert condition="value IN ('minimal', 'none')">Not exercising - explore barriers, problem-solve</Alert>
+        </Field>
+
+        <Field id="exercise_barriers" type="checkbox">
+          <Label>Barriers to Exercise (if not meeting target)</Label>
+          <Options>
+            <Option value="too_tired">Too tired/fatigued</Option>
+            <Option value="no_time">No time</Option>
+            <Option value="no_motivation">No motivation</Option>
+            <Option value="weather">Weather</Option>
+            <Option value="physical_health">Physical health problems/pain</Option>
+            <Option value="dont_enjoy">Doesn't enjoy exercise</Option>
+            <Option value="self_conscious">Self-conscious</Option>
+            <Option value="cost">Cost (gym membership)</Option>
+          </Options>
+        </Field>
+
+        <Field id="exercise_support_interventions" type="checkbox">
+          <Label>Interventions to Support Exercise</Label>
+          <Options>
+            <Option value="reduce_target">Reduce initial target (build gradually)</Option>
+            <Option value="problem_solve_barriers">Problem-solve specific barriers</Option>
+            <Option value="different_activity">Try different type of activity</Option>
+            <Option value="social_support">Encourage social exercise (friend, class, parkrun)</Option>
+            <Option value="exercise_prescription">Exercise on Prescription referral</Option>
+            <Option value="schedule">Help create specific schedule/plan</Option>
+          </Options>
+        </Field>
+      </SubSection>
+    </ConditionalSection>
+
+    <ConditionalSection show_if="diet_intervention_in_treatment_plan='yes'">
+      <SubSection id="diet_adherence">
+        <Title>Diet/Nutrition Adherence</Title>
+
+        <Field id="mediterranean_diet_adherence" type="select">
+          <Label>Mediterranean Diet Adherence</Label>
+          <Options>
+            <Option value="high">High (following most recommendations)</Option>
+            <Option value="moderate">Moderate (following some recommendations)</Option>
+            <Option value="low">Low (minimal change from baseline)</Option>
+            <Option value="none">None (no dietary changes made)</Option>
+          </Options>
+        </Field>
+
+        <Field id="diet_key_changes_made" type="checkbox">
+          <Label>Key Dietary Changes Made</Label>
+          <Options>
+            <Option value="regular_meals">Eating regular meals (3/day)</Option>
+            <Option value="fish">Increased fish (2×/week)</Option>
+            <Option value="vegetables">Increased vegetables/fruits</Option>
+            <Option value="whole_grains">Switched to whole grains</Option>
+            <Option value="olive_oil">Using olive oil</Option>
+            <Option value="reduced_processed">Reduced processed foods</Option>
+          </Options>
+        </Field>
+      </SubSection>
+    </ConditionalSection>
+
+    <ConditionalSection show_if="sleep_intervention_in_treatment_plan='yes'">
+      <SubSection id="sleep_adherence">
+        <Title>Sleep Intervention Adherence</Title>
+
+        <Field id="sleep_intervention_adherence" type="select">
+          <Label>Sleep Hygiene/CBT-I Adherence</Label>
+          <Options>
+            <Option value="high">High (following all recommendations)</Option>
+            <Option value="moderate">Moderate (following most recommendations)</Option>
+            <Option value="low">Low (following few recommendations)</Option>
+            <Option value="none">None (no changes made)</Option>
+          </Options>
+        </Field>
+
+        <Field id="sleep_quality_current" type="select" required="true">
+          <Label>Current Sleep Quality</Label>
+          <Options>
+            <Option value="good">Good (sleeping well most nights)</Option>
+            <Option value="fair">Fair (some difficulties)</Option>
+            <Option value="poor">Poor (frequent difficulties)</Option>
+            <Option value="very_poor">Very poor (nightly difficulties)</Option>
+          </Options>
+        </Field>
+
+        <Field id="sleep_changes_from_baseline" type="select">
+          <Label>Sleep Change from Baseline</Label>
+          <Options>
+            <Option value="much_better">Much better</Option>
+            <Option value="somewhat_better">Somewhat better</Option>
+            <Option value="no_change">No change</Option>
+            <Option value="worse">Worse</Option>
+          </Options>
+        </Field>
+      </SubSection>
+    </ConditionalSection>
+  </Section>
+
+  <!-- SIDE EFFECTS MONITORING (IF MEDICATION) -->
+  <ConditionalSection show_if="medication_in_treatment_plan='yes'">
+    <Section id="side_effects_monitoring">
+      <Title>Medication Side Effects Monitoring</Title>
+      <Description>Systematic side effect assessment</Description>
+
+      <Field id="any_side_effects" type="radio" required="true">
+        <Label>Any Side Effects Experienced?</Label>
+        <Options>
+          <Option value="yes">Yes</Option>
+          <Option value="no">No</Option>
+        </Options>
+      </Field>
+
+      <ConditionalSection show_if="any_side_effects='yes'">
+        <Field id="side_effects_present" type="checkbox" required="true">
+          <Label>Side Effects Present</Label>
+          <Options>
+            <Option value="nausea">Nausea/GI upset</Option>
+            <Option value="sexual">Sexual dysfunction (reduced libido, difficulty orgasm)</Option>
+            <Option value="weight_gain">Weight gain</Option>
+            <Option value="insomnia">Insomnia</Option>
+            <Option value="sedation">Sedation/drowsiness</Option>
+            <Option value="emotional_blunting">Emotional blunting/numbness</Option>
+            <Option value="vivid_dreams">Vivid dreams/nightmares</Option>
+            <Option value="anxiety">Increased anxiety/agitation</Option>
+            <Option value="sweating">Sweating</Option>
+            <Option value="dry_mouth">Dry mouth</Option>
+            <Option value="headache">Headache</Option>
+            <Option value="dizziness">Dizziness</Option>
+            <Option value="tremor">Tremor</Option>
+            <Option value="other">Other (specify in notes)</Option>
+          </Options>
+        </Field>
+
+        <Field id="side_effects_severity" type="select" required="true">
+          <Label>Overall Side Effect Severity</Label>
+          <Options>
+            <Option value="mild">Mild (noticeable but tolerable)</Option>
+            <Option value="moderate">Moderate (bothersome but manageable)</Option>
+            <Option value="severe">Severe (significantly impacts quality of life)</Option>
+            <Option value="intolerable">Intolerable (cannot continue medication)</Option>
+          </Options>
+          <Alert condition="value IN ('severe', 'intolerable')">Severe/intolerable side effects - consider dose reduction or medication switch</Alert>
+        </Field>
+
+        <Field id="side_effects_impact_adherence" type="radio" required="true">
+          <Label>Do Side Effects Affect Adherence?</Label>
+          <Options>
+            <Option value="yes">Yes - patient considering stopping</Option>
+            <Option value="somewhat">Somewhat - patient hesitant but continuing</Option>
+            <Option value="no">No - patient willing to continue despite side effects</Option>
+          </Options>
+          <Alert condition="value='yes'">Side effects affecting adherence - urgent intervention needed</Alert>
+        </Field>
+
+        <Field id="side_effect_management" type="checkbox">
+          <Label>Side Effect Management Strategies</Label>
+          <Options>
+            <Option value="reassurance">Reassurance (many side effects improve 2-4 weeks)</Option>
+            <Option value="timing_adjustment">Timing adjustment (take morning vs evening)</Option>
+            <Option value="dose_reduction">Dose reduction</Option>
+            <Option value="switch_medication">Switch to different medication</Option>
+            <Option value="symptomatic_treatment">Symptomatic treatment (anti-nausea, etc.)</Option>
+            <Option value="wait_and_monitor">Wait and monitor (side effects often improve)</Option>
+          </Options>
+        </Field>
+      </ConditionalSection>
+
+      <Field id="safety_monitoring_completed" type="checkbox">
+        <Label>Safety Monitoring (if applicable to medication)</Label>
+        <Options>
+          <Option value="blood_pressure">Blood pressure checked (if SNRI)</Option>
+          <Option value="weight">Weight monitored</Option>
+          <Option value="sodium">Sodium checked if hyponatremia risk (elderly, diuretics)</Option>
+          <Option value="bleeding_risk">Bleeding risk assessed (if on NSAID/aspirin/anticoagulant)</Option>
+        </Options>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- TREATMENT ADJUSTMENT DECISIONS -->
+  <Section id="treatment_adjustment">
+    <Title>Treatment Adjustment Decision</Title>
+    <Description>Document treatment adjustment decisions based on response</Description>
+
+    <Field id="treatment_adjustment_needed" type="radio" required="true">
+      <Label>Is Treatment Adjustment Needed?</Label>
+      <Options>
+        <Option value="continue_same">No - continue current treatment (working well)</Option>
+        <Option value="adjust_yes">Yes - treatment adjustment needed</Option>
+      </Options>
+    </Field>
+
+    <ConditionalSection show_if="treatment_adjustment_needed='adjust_yes'">
+      <Field id="adjustment_reason" type="select" required="true">
+        <Label>Reason for Adjustment</Label>
+        <Options>
+          <Option value="no_response">No response after adequate trial (8-12 weeks)</Option>
+          <Option value="partial_response">Partial response only (&lt;50% improvement)</Option>
+          <Option value="side_effects">Side effects intolerable</Option>
+          <Option value="non_adherence">Poor adherence</Option>
+          <Option value="worsening">Symptoms worsening</Option>
+          <Option value="remission_achieved">Remission achieved - transition to continuation phase</Option>
+        </Options>
+      </Field>
+
+      <Field id="adjustment_type" type="checkbox" required="true">
+        <Label>Adjustment Made</Label>
+        <Options>
+          <Option value="increase_dose">Increase medication dose</Option>
+          <Option value="decrease_dose">Decrease medication dose (side effects)</Option>
+          <Option value="switch_medication">Switch to different medication</Option>
+          <Option value="add_medication">Add second medication (augmentation)</Option>
+          <Option value="add_therapy">Add psychological therapy</Option>
+          <Option value="intensify_lifestyle">Intensify lifestyle interventions</Option>
+          <Option value="refer_specialist">Refer to mental health specialist</Option>
+          <Option value="continue_monitor">Continue current treatment, monitor closely</Option>
+        </Options>
+      </Field>
+
+      <Field id="adjustment_details" type="textarea" required="true">
+        <Label>Adjustment Details</Label>
+        <Placeholder>Specify exact change: e.g., "Increase sertraline from 50mg to 100mg daily" or "Refer to IAPT for CBT while continuing medication"</Placeholder>
+      </Field>
+
+      <Field id="adjustment_rationale" type="textarea" required="true">
+        <Label>Rationale for This Adjustment</Label>
+        <Placeholder>Why this specific adjustment? e.g., "Partial response (30% improvement) after 8 weeks at 50mg. Increase dose to achieve full response as per NICE guideline."</Placeholder>
+      </Field>
+    </ConditionalSection>
+  </Section>
+
+  <!-- CONTINUATION PHASE MONITORING (IF IN REMISSION) -->
+  <ConditionalSection show_if="treatment_response_status='remission'">
+    <Section id="continuation_monitoring">
+      <Title>Continuation Phase Monitoring</Title>
+      <Description>For patients in remission - prevent relapse</Description>
+
+      <Field id="remission_duration" type="number" required="true">
+        <Label>Duration of Remission (weeks)</Label>
+        <AutoCalculate>Weeks since PHQ-9 first dropped below 5</AutoCalculate>
+      </Field>
+
+      <Field id="continuation_treatment_status" type="select" required="true">
+        <Label>Continuation Treatment Status</Label>
+        <Options>
+          <Option value="continuing_full">Continuing full treatment dose/intensity</Option>
+          <Option value="maintaining_lifestyle">Maintaining lifestyle interventions only</Option>
+          <Option value="tapering">Tapering medication (after 6-12 months remission)</Option>
+          <Option value="stopped">Stopped treatment</Option>
+        </Options>
+        <Alert condition="value='stopped' AND remission_duration &lt; 26">Treatment stopped before recommended 6 months - high relapse risk</Alert>
+      </Field>
+
+      <Field id="relapse_warning_signs_present" type="radio" required="true">
+        <Label>Any Early Warning Signs of Relapse?</Label>
+        <Options>
+          <Option value="yes">Yes</Option>
+          <Option value="no">No</Option>
+        </Options>
+      </Field>
+
+      <ConditionalSection show_if="relapse_warning_signs_present='yes'">
+        <Field id="warning_signs" type="checkbox" required="true">
+          <Label>Warning Signs Present</Label>
+          <Options>
+            <Option value="sleep_worsening">Sleep worsening</Option>
+            <Option value="loss_interest">Losing interest in activities</Option>
+            <Option value="social_withdrawal">Starting to withdraw socially</Option>
+            <Option value="negative_thinking">Negative thinking increasing</Option>
+            <Option value="irritability">Increased irritability</Option>
+            <Option value="exercise_stopping">Stopped exercising</Option>
+            <Option value="phq9_rising">PHQ-9 rising (but still &lt;5)</Option>
+          </Options>
+        </Field>
+
+        <Field id="relapse_prevention_actions" type="checkbox" required="true">
+          <Label>Relapse Prevention Actions Taken</Label>
+          <Options>
+            <Option value="increase_monitoring">Increase monitoring frequency</Option>
+            <Option value="reinforce_lifestyle">Reinforce lifestyle interventions</Option>
+            <Option value="therapy_booster">Therapy booster session</Option>
+            <Option value="continue_medication">Ensure continuing medication (don't taper yet)</Option>
+            <Option value="problem_solve">Problem-solve current stressors</Option>
+          </Options>
+        </Field>
+      </ConditionalSection>
+
+      <Field id="relapse_prevention_plan_reviewed" type="radio" required="true">
+        <Label>Relapse Prevention Plan Reviewed with Patient?</Label>
+        <Options>
+          <Option value="yes">Yes</Option>
+          <Option value="no">No</Option>
+        </Options>
+      </Field>
+    </Section>
+  </ConditionalSection>
+
+  <!-- NEXT STEPS AND FOLLOW-UP -->
+  <Section id="next_steps">
+    <Title>Next Steps and Follow-Up Plan</Title>
+
+    <Field id="next_followup_date" type="date" required="true">
+      <Label>Next Follow-Up Appointment</Label>
+      <Guidance>
+        - If adjusting medication: 2 weeks
+        - If response assessment pending: 4-6 weeks
+        - If stable/remission: 8-12 weeks
+      </Guidance>
+    </Field>
+
+    <Field id="next_followup_focus" type="checkbox" required="true">
+      <Label>Next Follow-Up Will Assess</Label>
+      <Options>
+        <Option value="phq9">PHQ-9 score</Option>
+        <Option value="response">Treatment response</Option>
+        <Option value="side_effects">Side effects (if medication)</Option>
+        <Option value="adherence">Adherence</Option>
+        <Option value="adjustment_outcome">Outcome of treatment adjustment</Option>
+        <Option value="continuation">Continuation phase check</Option>
+        <Option value="tapering">Consider tapering medication (if 6-12 months remission)</Option>
+      </Options>
+    </Field>
+
+    <Field id="patient_action_plan" type="textarea">
+      <Label>Patient Action Plan (What Patient Will Do Before Next Visit)</Label>
+      <Placeholder>e.g., "Continue medication daily, aim for 150 min exercise/week, attend IAPT assessment appointment on [date], complete sleep diary"</Placeholder>
+    </Field>
+
+    <Field id="red_flags_discussed" type="radio" required="true">
+      <Label>Red Flags Discussed (When to Contact Before Next Appointment)</Label>
+      <Options>
+        <Option value="yes">Yes - patient knows when to seek help earlier</Option>
+        <Option value="no">No</Option>
+      </Options>
+    </Field>
+  </Section>
+
+  <!-- CLINICIAN NOTES -->
+  <Section id="clinician_notes_monitoring">
+    <Title>Clinician Notes</Title>
+
+    <Field id="clinical_impression" type="textarea" required="true">
+      <Label>Clinical Impression</Label>
+      <Placeholder>Overall assessment of patient's progress, any concerns, clinical reasoning</Placeholder>
+    </Field>
+
+    <Field id="additional_notes_monitoring" type="textarea">
+      <Label>Additional Notes</Label>
+    </Field>
+
+    <Field id="monitoring_clinician" type="text" required="true">
+      <Label>Clinician Name</Label>
+    </Field>
+
+    <Field id="monitoring_date_completed" type="date" required="true">
+      <Label>Monitoring Date</Label>
+      <DefaultValue>Today</DefaultValue>
+    </Field>
+  </Section>
+
+  <!-- CLINICAL DECISION SUPPORT ALERTS -->
+  <ClinicalDecisionSupport>
+    <Rule id="no_response_8_weeks">
+      <Condition>weeks_since_treatment_start &gt;= 8 AND phq9_percent_change &lt; 25</Condition>
+      <Alert level="warning">No significant response after 8 weeks (less than 25% improvement). Consider treatment adjustment: increase dose, add therapy, switch medication, or refer to specialist.</Alert>
+    </Rule>
+
+    <Rule id="worsening_on_treatment">
+      <Condition>phq9_change_from_baseline &gt; 0</Condition>
+      <Alert level="urgent">Patient WORSENING on treatment. Reassess diagnosis, check adherence, consider alternative diagnosis (bipolar, substance use), increase monitoring, consider specialist referral.</Alert>
+    </Rule>
+
+    <Rule id="suicide_risk_increased">
+      <Condition>phq9_q9_suicide_risk &gt; previous_phq9_q9</Condition>
+      <Alert level="urgent">Suicide risk INCREASED. Conduct full risk assessment, update safety plan, consider daily/weekly monitoring, ensure emergency contacts in place.</Alert>
+    </Rule>
+
+    <Rule id="partial_response_consider_intensification">
+      <Condition>weeks_since_treatment_start &gt;= 8 AND phq9_percent_change BETWEEN 25 AND 49</Condition>
+      <Alert level="info">Partial response (25-49% improvement). Consider treatment intensification: increase dose (if on medication), add therapy, intensify lifestyle interventions.</Alert>
+    </Rule>
+
+    <Rule id="remission_achieved_continue_6_months">
+      <Condition>treatment_response_status='remission' AND remission_duration &lt; 26</Condition>
+      <Alert level="info">Remission achieved. IMPORTANT: Continue treatment at same dose/intensity for 6-12 months after remission to prevent relapse. Do not stop treatment early.</Alert>
+    </Rule>
+
+    <Rule id="poor_adherence_affects_outcome">
+      <Condition>medication_adherence_rate IN ('fair', 'poor', 'stopped') OR exercise_adherence_level IN ('minimal', 'none')</Condition>
+      <Alert level="warning">Poor treatment adherence. Address barriers before concluding treatment is ineffective. Explore reasons, problem-solve, consider alternative treatments if insurmountable barriers.</Alert>
+    </Rule>
+
+    <Rule id="side_effects_intolerable">
+      <Condition>side_effects_severity IN ('severe', 'intolerable')</Condition>
+      <Alert level="warning">Intolerable side effects. Consider: dose reduction, switch to different medication with better side effect profile, or discontinue if risk/benefit unfavorable.</Alert>
+    </Rule>
+
+    <Rule id="early_warning_signs_relapse">
+      <Condition>remission_duration &gt; 8 AND relapse_warning_signs_present='yes'</Condition>
+      <Alert level="info">Early warning signs of relapse detected. Intervene early: reinforce lifestyle, therapy booster, ensure not tapering medication yet. Early intervention prevents full relapse.</Alert>
+    </Rule>
+
+    <Rule id="stopped_treatment_prematurely">
+      <Condition>continuation_treatment_status='stopped' AND remission_duration &lt; 26</Condition>
+      <Alert level="warning">Treatment stopped before 6 months of remission. High risk of relapse (50-80%). Strongly encourage restarting treatment or close monitoring for relapse.</Alert>
+    </Rule>
+  </ClinicalDecisionSupport>
+
+  <!-- LONGITUDINAL DATA VISUALIZATION SUGGESTIONS -->
+  <DataVisualization>
+    <Chart id="phq9_over_time">
+      <Title>PHQ-9 Score Over Time</Title>
+      <Type>Line graph</Type>
+      <XAxis>Weeks since treatment start</XAxis>
+      <YAxis>PHQ-9 score (0-27)</YAxis>
+      <DataPoints>All PHQ-9 scores from baseline to current</DataPoints>
+      <ReferenceLines>
+        <Line>Baseline score</Line>
+        <Line>Response threshold (50% reduction)</Line>
+        <Line>Remission threshold (score &lt; 5)</Line>
+      </ReferenceLines>
+      <Annotations>Treatment changes marked on timeline</Annotations>
+    </Chart>
+
+    <Chart id="functional_outcomes_over_time">
+      <Title>Functional Outcomes Over Time</Title>
+      <Type>Stacked bar chart</Type>
+      <Domains>Work status, social functioning, self-care</Domains>
+      <Purpose>Show improvement in daily functioning alongside symptom reduction</Purpose>
+    </Chart>
+  </DataVisualization>
+
+  <!-- AUDIT AND QUALITY METRICS -->
+  <AuditFields>
+    <Metric id="phq9_monitoring_completion">
+      <Label>PHQ-9 Monitoring Completion Rate</Label>
+      <Calculation>Percentage of expected monitoring visits with PHQ-9 completed</Calculation>
+    </Metric>
+
+    <Metric id="treatment_response_rate">
+      <Label>Treatment Response Rate</Label>
+      <Calculation>Percentage achieving ≥50% PHQ-9 reduction by 12 weeks</Calculation>
+    </Metric>
+
+    <Metric id="remission_rate">
+      <Label>Remission Rate</Label>
+      <Calculation>Percentage achieving PHQ-9 &lt; 5 by 12 weeks</Calculation>
+    </Metric>
+
+    <Metric id="adherence_rate">
+      <Label>Treatment Adherence Rate</Label>
+      <Calculation>Percentage with good/perfect adherence to prescribed treatment</Calculation>
+    </Metric>
+
+    <Metric id="adjustment_for_non_response">
+      <Label>Timely Adjustment for Non-Response</Label>
+      <Calculation>Percentage of non-responders receiving treatment adjustment by 12 weeks</Calculation>
+    </Metric>
+
+    <Metric id="continuation_phase_completion">
+      <Label>Continuation Phase Completion</Label>
+      <Calculation>Percentage continuing treatment for 6+ months after remission</Calculation>
+    </Metric>
+
+    <Metric id="relapse_rate">
+      <Label>Relapse Rate</Label>
+      <Calculation>Percentage achieving remission who relapse within 12 months</Calculation>
+    </Metric>
+  </AuditFields>
+
+  <!-- INTEGRATION GUIDANCE -->
+  <IntegrationGuidance>
+    <System name="EMIS">
+      <Instructions>
+        1. Create as recurring consultation template
+        2. Link to initial treatment plan
+        3. Auto-populate baseline PHQ-9 from treatment plan
+        4. Set up automated follow-up appointment reminders
+        5. Use EMIS graphing to visualize PHQ-9 over time
+        6. Create alerts for non-response at 8 weeks
+      </Instructions>
+    </System>
+
+    <System name="SystmOne">
+      <Instructions>
+        1. Create as monitoring template linked to care plan
+        2. Use SystmOne workflows for automated reminders
+        3. Pull historical PHQ-9 scores automatically
+        4. Set up tasks for treatment review at key timepoints
+        5. Use SystmOne reports for audit metrics
+      </Instructions>
+    </System>
+
+    <System name="Vision">
+      <Instructions>
+        1. Create monitoring form in Vision
+        2. Link to depression register for audit
+        3. Automated PHQ-9 graphing
+        4. Set review tasks based on treatment phase
+      </Instructions>
+    </System>
+  </IntegrationGuidance>
+
+  <UsageNotes>
+    <Note>Complete at every follow-up visit for depression treatment monitoring.</Note>
+    <Note>Frequency: Every 2 weeks if medication started or high risk; every 4-6 weeks during active treatment; every 8-12 weeks in continuation phase.</Note>
+    <Note>Use longitudinal tracking to visualize progress and identify non-response early.</Note>
+    <Note>Link monitoring data to treatment plan for complete clinical record.</Note>
+    <Note>PHQ-9 must be completed at every visit - essential for outcome measurement.</Note>
+    <Note>Response definitions: ≥50% PHQ-9 reduction = response; PHQ-9 &lt; 5 = remission.</Note>
+    <Note>If no response by 8-12 weeks, treatment adjustment is required per NICE guideline.</Note>
+  </UsageNotes>
+
+</EHRTemplate>
