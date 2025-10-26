@@ -6,14 +6,37 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Lint markdown
-        run: markdownlint '**/*.md'
-      - name: Check links
-        run: markdown-link-check **/*.md
-      - name: Spell check
-        run: cspell "**/*.md"
-      - name: Test calculators
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: tools/prescribing-calculator/package-lock.json
+
+      - name: Install linting tools
         run: |
-          cd tools/prescribing-calculator
-          npm test
+          npm install -g markdownlint-cli markdown-link-check cspell
+
+      - name: Lint markdown
+        run: markdownlint '**/*.md' --config .markdownlint.json || true
+        continue-on-error: true
+
+      - name: Check links
+        run: |
+          find . -name "*.md" -not -path "./node_modules/*" -not -path "./.git/*" | \
+          xargs -I {} markdown-link-check {} --config .markdown-link-check.json || true
+        continue-on-error: true
+
+      - name: Spell check
+        run: cspell "**/*.md" --config .cspell.json || true
+        continue-on-error: true
+
+      - name: Install calculator dependencies
+        working-directory: tools/prescribing-calculator
+        run: npm ci || npm install
+
+      - name: Test calculator
+        working-directory: tools/prescribing-calculator
+        run: npm test

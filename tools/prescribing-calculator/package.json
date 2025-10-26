@@ -1,0 +1,30 @@
+{
+  "name": "equilibrium-prescribing-calculator",
+  "version": "1.0.0",
+  "description": "EQUILIBRIUM prescribing calculator for guideline-concordant depression management",
+  "main": "src/calculator.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "EQUILIBRIUM",
+    "depression",
+    "prescribing",
+    "NICE",
+    "guidelines"
+  ],
+  "author": "EQUILIBRIUM Project Team",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  }
+}
