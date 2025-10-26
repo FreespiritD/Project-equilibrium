@@ -1,0 +1,11 @@
+patient_id,practice_id,year,age,sex,ethnicity,imd_quintile,phq9_baseline,phq9_week12,depression_severity,treatment_group,intervention_type,phq9_response,phq9_remission,patient_satisfaction
+P001-3456,GP001,2020,34,Female,White British,3,14,6,Moderate,Intervention,Lifestyle only,Yes,No,4
+P002-7821,GP001,2020,52,Male,Asian,2,16,9,Moderately Severe,Intervention,Lifestyle + Therapy,Yes,No,5
+P003-2198,GP001,2020,28,Female,White British,4,12,3,Moderate,Intervention,Lifestyle only,Yes,Yes,5
+P004-5643,GP002,2020,45,Male,White Other,3,18,12,Moderately Severe,Intervention,Combined,Yes,No,4
+P005-9087,GP002,2020,61,Female,White British,1,15,8,Moderately Severe,Intervention,Medication,Yes,No,3
+P006-3421,GP003,2020,38,Female,Mixed,4,11,4,Moderate,Intervention,Lifestyle only,Yes,Yes,5
+P007-7654,GP003,2020,29,Male,White British,5,13,7,Moderate,Intervention,Lifestyle + Therapy,Yes,No,4
+P008-1098,GP004,2020,56,Female,Black,2,17,10,Moderately Severe,Intervention,Combined,Yes,No,4
+P009-4532,GP004,2020,42,Male,White British,3,14,5,Moderate,Intervention,Lifestyle only,Yes,Yes,5
+P010-8765,GP005,2020,31,Female,White British,4,12,8,Moderate,Intervention,Lifestyle only,No,No,3

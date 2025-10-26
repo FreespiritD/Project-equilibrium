@@ -1,0 +1,13 @@
+practice_id,year,quarter,depression_consultations,mild_depression_cases,mild_depression_medication_first_line,guideline_nonconcordant_rate,deprescribing_attempts,deprescribing_successful,mean_phq9_response_rate
+GP001,2020,Q1,45,28,17,60.7,3,1,41
+GP001,2020,Q2,52,32,15,46.9,5,2,44
+GP001,2020,Q3,48,29,12,41.4,6,3,48
+GP001,2020,Q4,51,31,9,29.0,8,5,52
+GP001,2021,Q1,49,30,8,26.7,9,6,55
+GP001,2021,Q2,53,33,7,21.2,11,7,58
+GP001,2021,Q3,50,31,6,19.4,10,7,61
+GP001,2021,Q4,54,34,6,17.6,12,9,63
+GP002,2020,Q1,67,41,26,63.4,2,0,39
+GP002,2020,Q2,71,44,22,50.0,4,1,42
+GP002,2020,Q3,69,42,18,42.9,5,2,45
+GP002,2020,Q4,73,45,15,33.3,7,3,49
