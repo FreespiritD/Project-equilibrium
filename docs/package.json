@@ -1,0 +1,22 @@
+{
+  "name": "equilibrium-documentation",
+  "version": "1.0.0",
+  "description": "EQUILIBRIUM Project Documentation",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "npm run build && npx http-server build -p 8080",
+    "clean": "rm -rf build"
+  },
+  "keywords": [
+    "EQUILIBRIUM",
+    "documentation",
+    "depression",
+    "medical-education"
+  ],
+  "author": "EQUILIBRIUM Project Team",
+  "license": "MIT",
+  "devDependencies": {
+    "marked": "^9.0.0",
+    "gray-matter": "^4.0.3"
+  }
+}
