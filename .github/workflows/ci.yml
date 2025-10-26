@@ -1,0 +1,19 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Lint markdown
+        run: markdownlint '**/*.md'
+      - name: Check links
+        run: markdown-link-check **/*.md
+      - name: Spell check
+        run: cspell "**/*.md"
+      - name: Test calculators
+        run: |
+          cd tools/prescribing-calculator
+          npm test
