@@ -1,0 +1,11 @@
+site_type,site_id,site_name,region,list_size,students_per_year,gp_count,nurse_count,location_type,deprivation_score,implementation_model,baseline_phq9_response_rate,baseline_guideline_concordance
+Medical School,MS001,University of Manchester,North West,NA,430,NA,NA,Urban,NA,Full curriculum,NA,27
+Medical School,MS002,University of Edinburgh,Scotland,NA,325,NA,NA,Urban,NA,Modular,NA,31
+GP Practice,GP001,Hillside Medical Centre,North West,8500,NA,6,3,Urban,32.4,Quick-start,44,29
+GP Practice,GP002,Riverside Practice,North West,12000,NA,8,4,Urban,28.7,Standard,41,33
+GP Practice,GP003,Woodland Surgery,Yorkshire,5200,NA,4,2,Rural,18.6,Standard,47,35
+GP Practice,GP004,City Practice Leeds,Yorkshire,24000,NA,12,6,Urban,22.1,Standard,42,31
+GP Practice,GP005,Green Lane Medical,East Midlands,9800,NA,7,3,Suburban,25.3,Standard,43,28
+GP Practice,GP006,Parkview Health Centre,West Midlands,15000,NA,10,5,Urban,38.9,Phased,39,26
+GP Practice,GP007,Coastal Practice,South West,6700,NA,5,2,Rural,16.2,Quick-start,48,37
+GP Practice,GP008,Metropolitan GP,London,18500,NA,9,5,Urban,34.5,Standard,40,30

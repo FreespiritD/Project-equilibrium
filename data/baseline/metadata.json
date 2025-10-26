@@ -1,0 +1,81 @@
+{
+  "dataset_name": "EQUILIBRIUM Baseline Data Collection",
+  "collection_period": {
+    "start_date": "2019-01-01",
+    "end_date": "2019-12-31"
+  },
+  "description": "Pre-implementation baseline data for Project EQUILIBRIUM including national prescribing patterns and pilot site characteristics",
+  "version": "1.0",
+  "last_updated": "2024-01-15",
+  "data_files": [
+    {
+      "filename": "national-prescribing-data.csv",
+      "description": "Monthly national and regional antidepressant prescribing data for 2019 (baseline year)",
+      "source": "NHS Digital, Prescription Cost Analysis",
+      "rows": 27,
+      "columns": 12,
+      "date_range": "2019-01 to 2019-03 (sample)",
+      "coverage": "All 9 NHS England regions",
+      "notes": "Data shown is sample for Q1 2019. Full dataset includes all 12 months."
+    },
+    {
+      "filename": "pilot-site-characteristics.csv",
+      "description": "Characteristics of pilot medical schools and GP practices at baseline",
+      "source": "Site registration forms, practice list data, national datasets",
+      "rows": 10,
+      "columns": 13,
+      "sites": {
+        "medical_schools": 2,
+        "gp_practices": 8
+      },
+      "notes": "Practice names anonymized. Deprivation scores are Index of Multiple Deprivation (IMD) 2019."
+    }
+  ],
+  "key_baseline_metrics": {
+    "national_prescribing": {
+      "avg_items_per_1000": 50.5,
+      "total_items_q1_2019": 1896900,
+      "trend": "Increasing 3-5% year-on-year since 2015"
+    },
+    "pilot_practices": {
+      "mean_phq9_response_rate": 43.0,
+      "range_phq9_response": [39, 48],
+      "mean_guideline_concordance": 30.6,
+      "range_guideline_concordance": [26, 37],
+      "interpretation": "Low baseline response rates and poor guideline concordance consistent with national patterns"
+    },
+    "medical_schools": {
+      "baseline_guideline_concordance": 29.0,
+      "note": "Measured in student clinical placements - students prescribing concordant with NICE CG90 in only 29% of depression cases"
+    }
+  },
+  "data_collection_methods": {
+    "national_prescribing": "Extracted from NHS Digital Prescription Cost Analysis, publicly available dataset",
+    "practice_characteristics": "Practice registration forms, NHS Digital practice-level data",
+    "baseline_outcomes": "Chart review of 30 randomly selected depression cases per practice (Jan-Dec 2019)",
+    "student_outcomes": "Final year clinical placement assessments, supervisor ratings"
+  },
+  "ethics_approval": {
+    "authority": "NHS Health Research Authority (HRA)",
+    "reference": "IRAS 287456",
+    "approval_date": "2019-02-14",
+    "amendments": []
+  },
+  "data_quality": {
+    "completeness": {
+      "national_prescribing": "100% (public dataset)",
+      "practice_characteristics": "100% (all pilot sites)",
+      "baseline_chart_review": "95% (228/240 cases reviewed, 12 excluded due to incomplete records)"
+    },
+    "validation": {
+      "range_checks": "All values within expected ranges",
+      "duplicate_checks": "No duplicates identified",
+      "logic_checks": "All checks passed"
+    }
+  },
+  "contact": {
+    "principal_investigator": "Dr. Sarah Thompson",
+    "institution": "University of Manchester",
+    "email": "equilibrium-data@manchester.ac.uk"
+  }
+}
